@@ -2,7 +2,7 @@
 	import * as Card from "$lib/components/ui/card";
 	import { Input } from "$lib/components/ui/input";
 	import * as Form from "$lib/components/ui/form";
-	import { formSchema, type FormSchema } from "./form-schema";
+	import { formSchema, type FormSchema } from "../form-schema";
 	import { type SuperValidated, type Infer, superForm } from "sveltekit-superforms";
 	import { zodClient } from "sveltekit-superforms/adapters";
 
@@ -36,9 +36,17 @@
 					{#snippet children({ props })}
 						<div class="flex items-center">
 							<Form.Label for="password">Password</Form.Label>
-							<a href="##" class="ml-auto inline-block text-sm underline">Forgot your password?</a>
+							<a href="/forgot-password" class="ml-auto inline-block text-sm underline"
+								>Forgot your password?</a
+							>
 						</div>
-						<Input {...props} bind:value={$formData.password} />
+						<Input
+							{...props}
+							type="password"
+							autocomplete="off"
+							bind:value={$formData.password}
+							class="font-bold tracking-widest"
+						/>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
@@ -48,7 +56,8 @@
 		</form>
 
 		<div class="mt-4 text-center text-sm">
-			Contact your administrator if you don't have an account or you're having trouble logging in.
+			Contact your administrator if you don't have an account or if you're having trouble logging
+			in.
 		</div>
 	</Card.Content>
 </Card.Root>
