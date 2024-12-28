@@ -14,6 +14,17 @@
 		students: "Students",
 		representatives: "Representatives",
 	};
+
+	const PAGE_TITLES: Record<string, string> = {
+		// ADMINISTRATOR
+		"/admin": "Dashboard",
+		"/admin/batches": "Batches",
+		"/admin/batches/new": "New Batch",
+		"/admin/students": "Students",
+		"/admin/representatives": "Representatives",
+		// STUDENT
+		"/dashboard": "Dashboard",
+	};
 </script>
 
 {#if segments.length >= 1}
@@ -22,7 +33,7 @@
 			{#each segments as segment, i (i)}
 				{#if i === segments.length - 1}
 					<Breadcrumb.Item>
-						<Breadcrumb.Page>{SEGMENT_TITLES[segment]}</Breadcrumb.Page>
+						<Breadcrumb.Page>{PAGE_TITLES[page.url.pathname]}</Breadcrumb.Page>
 					</Breadcrumb.Item>
 				{:else}
 					<Breadcrumb.Item class="hidden sm:block">
@@ -37,3 +48,5 @@
 		</Breadcrumb.List>
 	</Breadcrumb.Root>
 {/if}
+
+<!-- TODO: by default on mobile must show the Go back button, only show breadcrumbs on desk -->
