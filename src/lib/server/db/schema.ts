@@ -107,3 +107,21 @@ export const representatives = pgTable("representatives", {
 		.notNull()
 		.references(() => students.id),
 });
+
+export type Account = typeof accounts.$inferSelect;
+
+export type Session = typeof sessions.$inferSelect;
+
+export type Student = typeof students.$inferSelect;
+
+export type Batch = typeof batches.$inferSelect;
+
+export type Subject = typeof subjects.$inferSelect;
+
+export type Enrollment = typeof enrollments.$inferSelect;
+
+export type Period = typeof periods.$inferSelect;
+
+export type Absentee = typeof absentees.$inferSelect;
+
+export type Representative = typeof representatives.$inferSelect;

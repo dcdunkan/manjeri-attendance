@@ -1,19 +1,7 @@
 <script lang="ts">
-	import {
-		ArrowRightIcon,
-		CalendarCheck2Icon,
-		LogOutIcon,
-		UserCogIcon,
-		type Icon as IconType,
-	} from "lucide-svelte";
+	import { CalendarCheck2Icon, LogOutIcon, UserCogIcon } from "lucide-svelte";
 	import AttendanceCard from "./components/attendance-card.svelte";
-
-	type MenuItem = {
-		path: string;
-		title: string;
-		description: string;
-		icon: typeof IconType;
-	};
+	import { type MenuItem, default as Menu } from "$lib/components/menu-items.svelte";
 
 	const menuItems: MenuItem[] = [
 		{
@@ -37,23 +25,6 @@
 	];
 </script>
 
-{#snippet menuItem(item: MenuItem)}
-	<a href={item.path}>
-		<div
-			class="flex place-items-center justify-between gap-4 border-b-2 border-transparent px-2 py-4 transition-all duration-200 hover:border-primary"
-		>
-			<div class="flex gap-4">
-				<div class="pt-2"><svelte:component this={item.icon} /></div>
-				<div>
-					<div class="font-medium">{item.title}</div>
-					<div class="text-sm">{item.description}</div>
-				</div>
-			</div>
-			<div><ArrowRightIcon /></div>
-		</div></a
-	>
-{/snippet}
-
 <div>
 	<div class="text-lg">Hello there</div>
 	<div class="truncate text-4xl font-medium">Sheron Rajesh</div>
@@ -67,7 +38,5 @@
 <AttendanceCard />
 
 <div>
-	{#each menuItems as item}
-		{@render menuItem(item)}
-	{/each}
+	<Menu items={menuItems} />
 </div>
