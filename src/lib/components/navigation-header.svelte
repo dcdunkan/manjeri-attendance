@@ -15,16 +15,7 @@
 		representatives: "Representatives",
 	};
 
-	const PAGE_TITLES: Record<string, string> = {
-		// ADMINISTRATOR
-		"/admin": "Dashboard",
-		"/admin/batches": "Batches",
-		"/admin/batches/new": "New Batch",
-		"/admin/students": "Students",
-		"/admin/representatives": "Representatives",
-		// STUDENT
-		"/dashboard": "Dashboard",
-	};
+	let { title }: { title: string } = $props();
 </script>
 
 {#if segments.length >= 1}
@@ -33,7 +24,7 @@
 			{#each segments as segment, i (i)}
 				{#if i === segments.length - 1}
 					<Breadcrumb.Item>
-						<Breadcrumb.Page>{PAGE_TITLES[page.url.pathname]}</Breadcrumb.Page>
+						<Breadcrumb.Page>{title}</Breadcrumb.Page>
 					</Breadcrumb.Item>
 				{:else}
 					<Breadcrumb.Item class="hidden sm:block">

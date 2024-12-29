@@ -10,7 +10,11 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
-		"lint": "prettier --check . && eslint ."
+		"lint": "prettier --check . && eslint .",
+		"db:push": "drizzle-kit push",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate",
+		"db:studio": "drizzle-kit studio"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.3",
@@ -28,11 +32,13 @@
 		"formsnap": "^2.0.0",
 		"globals": "^15.0.0",
 		"lucide-svelte": "^0.469.0",
+		"mode-watcher": "^0.5.0",
 		"prettier": "^3.3.2",
 		"prettier-plugin-svelte": "^3.2.6",
 		"prettier-plugin-tailwindcss": "^0.6.5",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
+		"svelte-sonner": "^0.3.28",
 		"sveltekit-superforms": "^2.22.1",
 		"tailwind-merge": "^2.6.0",
 		"tailwind-variants": "^0.3.0",
@@ -47,8 +53,8 @@
 		"@neondatabase/serverless": "^0.10.4",
 		"@oslojs/crypto": "^1.0.1",
 		"@oslojs/encoding": "^1.1.0",
+		"dotenv": "^16.4.7",
 		"drizzle-orm": "^0.38.3",
-		"embla-carousel-autoplay": "^8.5.1",
-		"mode-watcher": "^0.5.0"
+		"embla-carousel-autoplay": "^8.5.1"
 	}
 }

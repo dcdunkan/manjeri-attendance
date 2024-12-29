@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { CalendarCheck2Icon, LogOutIcon, UserCogIcon } from "lucide-svelte";
-	import AttendanceCard from "./components/attendance-card.svelte";
+	import AttendanceCard from "./attendance-card.svelte";
 	import { type MenuItem, default as Menu } from "$lib/components/menu-items.svelte";
 
 	const menuItems: MenuItem[] = [

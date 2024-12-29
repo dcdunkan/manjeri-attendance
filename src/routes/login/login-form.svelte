@@ -2,7 +2,7 @@
 	import * as Card from "$lib/components/ui/card";
 	import { Input } from "$lib/components/ui/input";
 	import * as Form from "$lib/components/ui/form";
-	import { formSchema, type FormSchema } from "../form-schema";
+	import { formSchema, type FormSchema } from "./form-schema";
 	import { type SuperValidated, type Infer, superForm } from "sveltekit-superforms";
 	import { zodClient } from "sveltekit-superforms/adapters";
 

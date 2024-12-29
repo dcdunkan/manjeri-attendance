@@ -1,18 +1,19 @@
 <script lang="ts">
 	import { GraduationCapIcon, KeyRoundIcon, LogOutIcon, UsersIcon } from "lucide-svelte";
 	import { type MenuItem, default as Menu } from "$lib/components/menu-items.svelte";
+	import NavigationHeader from "$lib/components/navigation-header.svelte";
 
 	const menuItems: MenuItem[] = [
 		{
 			path: "/admin/batches",
 			title: "Manage Batches",
-			description: "Add or edit batches.",
+			description: "Add or edit batches and subjects.",
 			icon: UsersIcon,
 		},
 		{
 			path: "/admin/students",
 			title: "Manage Students",
-			description: "Manage student accounts and subjects.",
+			description: "Manage student accounts and enrollments.",
 			icon: GraduationCapIcon,
 		},
 		{
@@ -29,6 +30,8 @@
 		},
 	];
 </script>
+
+<NavigationHeader title="Dashboard" />
 
 <div>
 	<div class="text-lg">You're logged in as the&ndash;</div>
