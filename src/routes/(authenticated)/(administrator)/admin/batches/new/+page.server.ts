@@ -38,6 +38,6 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 
-		redirect(303, `/admins/batches/${batchId}`);
+		redirect(303, `/admin/batches/${batchId}`);
 	},
 };
