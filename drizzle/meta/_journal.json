@@ -15,6 +15,20 @@
       "when": 1735426935366,
       "tag": "0001_eager_spirit",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1735661629390,
+      "tag": "0002_furry_violations",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1735749559166,
+      "tag": "0003_huge_callisto",
+      "breakpoints": true
     }
   ]
 }

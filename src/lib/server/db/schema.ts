@@ -19,9 +19,7 @@ export const accounts = pgTable(
 		id: integer("id").primaryKey().generatedAlwaysAsIdentity({ startWith: 1000 }),
 		login: text("login").unique().notNull(),
 		passwordHash: text("password_hash").notNull(),
-		role: accountRoleEnum("role")
-			.$default(() => "student")
-			.notNull(),
+		role: accountRoleEnum("role").notNull(),
 	},
 	(table) => [uniqueIndex("account_idx").on(table.login)],
 );
@@ -38,7 +36,7 @@ export const accountsRelations = relations(accounts, ({ one, many }) => ({
 }));
 
 // TODO: Limit the number of sessions that can be created for one account.
-// Otherwise, it can be used to populate the database in unwanted forms.
+// Otherwise, it can be used to populate the database in unwanted ways.
 export const sessions = pgTable(
 	"sessions",
 	{
@@ -77,9 +75,11 @@ export const students = pgTable("students", {
 		.primaryKey()
 		.references(() => accounts.id),
 	fullName: text("full_name").notNull(),
+	rollNumber: integer("roll_number").notNull(),
 	batchId: integer("batch_id")
 		.notNull()
 		.references(() => batches.id),
+	// POSSIBLY REMOVE THIS? COUNT REPRESENTATIONS INSTEAD.
 	isRep: boolean("is_representative").default(false).notNull(),
 });
 
@@ -123,6 +123,7 @@ export const subjectsRelations = relations(subjects, ({ one, many }) => ({
 	periods: many(periods, { relationName: "subject_periods" }),
 	enrollments: many(enrollments, { relationName: "subject_enrollments" }),
 	representatives: many(representatives, { relationName: "subject_representatives" }),
+	absents: many(absentees, { relationName: "subject_absents" }),
 }));
 
 export const enrollments = pgTable(
@@ -184,6 +185,9 @@ export const absentees = pgTable("absentees", {
 	studentId: integer("student_id")
 		.notNull()
 		.references(() => students.id),
+	subjectId: integer("subject_id")
+		.notNull()
+		.references(() => subjects.id),
 	periodId: integer("period_id")
 		.notNull()
 		.references(() => periods.id),
@@ -200,6 +204,11 @@ export const absenteesRelations = relations(absentees, ({ one }) => ({
 		fields: [absentees.periodId],
 		references: [periods.id],
 		relationName: "period_absentees",
+	}),
+	subject: one(subjects, {
+		fields: [absentees.subjectId],
+		references: [subjects.id],
+		relationName: "subject_absents",
 	}),
 }));
 

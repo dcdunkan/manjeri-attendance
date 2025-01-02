@@ -1,0 +1,1 @@
+ALTER TABLE "students" ADD COLUMN "roll_number" integer NOT NULL;
