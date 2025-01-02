@@ -28,11 +28,11 @@ export const load: PageServerLoad = async (event) => {
 				},
 				{
 					id: 3,
-					subject: { id: 15, name: "Pathology", periodCount: 0, asbentCount: 0 },
+					subject: { id: 15, name: "Pathology", periodCount: 33, asbentCount: 2 },
 				},
 				{
 					id: 4,
-					subject: { id: 16, name: "Pharmacology", periodCount: 0, asbentCount: 0 },
+					subject: { id: 16, name: "Pharmacology", periodCount: 4, asbentCount: 0 },
 				},
 			],
 			representations: [

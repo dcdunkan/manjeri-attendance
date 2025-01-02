@@ -32,7 +32,7 @@
 
 <h2 class="font-serif text-2xl italic">Basic Information</h2>
 
-<Table.Root class="text-base">
+<Table.Root>
 	<Table.Body>
 		<Table.Row>
 			<Table.Head class="max-w-min text-primary">ID</Table.Head>
@@ -74,9 +74,9 @@
 	</Table.Body>
 </Table.Root>
 
-<!-- <h2 class="font-serif text-2xl italic">
+<h2 class="font-serif text-2xl italic">
 	Enrolled Subjects <span class="text-muted-foreground">({student.enrollments.length})</span>
-</h2> -->
+</h2>
 <p>
 	Subjects enrolled by the student are shown below. Click on a subject name to see more information
 	about them. Edit the student to enroll more subjects or leave the exising ones.
@@ -106,10 +106,16 @@
 						{/if}</Table.Cell
 					>
 					<Table.Cell class="text-center"
-						>{enrollment.subject.asbentCount} / {enrollment.subject.periodCount}</Table.Cell
+						>{enrollment.subject.periodCount - enrollment.subject.asbentCount} / {enrollment.subject
+							.periodCount}</Table.Cell
 					>
 					<Table.Cell class="text-center"
-						>{safeDivision(enrollment.subject.asbentCount, enrollment.subject.periodCount) * 100} %</Table.Cell
+						>{(
+							safeDivision(
+								enrollment.subject.periodCount - enrollment.subject.asbentCount,
+								enrollment.subject.periodCount,
+							) * 100
+						).toFixed(1)} %</Table.Cell
 					>
 				</Table.Row>
 			{/each}
