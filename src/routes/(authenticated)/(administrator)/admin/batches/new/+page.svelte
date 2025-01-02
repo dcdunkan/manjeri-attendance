@@ -8,7 +8,7 @@
 
 <NavigationHeader title="New Batch" />
 
-<div class="text-2xl">Register batch</div>
+<div class="text-2xl">Register Batch</div>
 
 <p>Fill the details to register a new batch.</p>
 

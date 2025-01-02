@@ -34,8 +34,8 @@
 <NavigationHeader title="Dashboard" />
 
 <div>
-	<div class="text-lg">You're logged in as the&ndash;</div>
-	<div class="truncate text-4xl font-medium">Administrator</div>
+	<div class="text">You're logged in as the&ndash;</div>
+	<div class="truncate font-serif text-5xl font-medium italic">Administrator</div>
 </div>
 
 <div>

@@ -1,8 +1,6 @@
+import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
-import { getBatches } from "$lib/server/db";
 
 export const load: PageServerLoad = async () => {
-	return {
-		batches: getBatches(),
-	};
+	return redirect(302, "/login");
 };

@@ -12,7 +12,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		event.locals.account = null;
 		event.locals.session = null;
 		if (event.url.pathname !== LOGIN_ROUTE) {
-			// return redirect(303, LOGIN_ROUTE);
+			// TODO: return redirect(303, LOGIN_ROUTE);
 			return resolve(event);
 		} else {
 			return resolve(event);

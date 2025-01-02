@@ -3,23 +3,22 @@
 
 	export const formSchema = z.object({
 		name: z.string().min(2).max(64),
-		subjects: z.array(z.string()).refine((value) => value.some((item) => item), {
-			message: "Batch must have at least one subject.",
-		}),
+		subjects: z.array(z.string()),
+		// TODO: .nonempty("Batch must have at least one subject."),
 	});
 
 	export type FormSchema = typeof formSchema;
 </script>
 
 <script lang="ts">
-	import SuperDebug, { superForm, type Infer, type SuperValidated } from "sveltekit-superforms";
+	import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms";
 	import { zodClient } from "sveltekit-superforms/adapters";
 	import { Input } from "$lib/components/ui/input";
 	import * as Form from "$lib/components/ui/form";
 	import { Button } from "$lib/components/ui/button";
 	import { PlusIcon, XIcon } from "lucide-svelte";
 	import { toast } from "svelte-sonner";
-	import { browser } from "$app/environment";
+	import EmptyInfobox from "$lib/components/empty-infobox.svelte";
 
 	let { data }: { data: SuperValidated<Infer<FormSchema>> } = $props();
 
@@ -71,7 +70,10 @@
 	<Form.Fieldset {form} name="subjects" class="space-y-0">
 		<div class="mb-4">
 			<Form.Legend class="text-base">Subjects</Form.Legend>
-			<Form.Description>Add the subjects you want to assign to the batch.</Form.Description>
+			<Form.Description
+				>Add the subjects you want to assign to the batch. Subject names must be distinct. At least
+				one subject is required to register the batch.</Form.Description
+			>
 		</div>
 		<div class="space-y-2">
 			<Form.FieldErrors />
@@ -88,6 +90,11 @@
 						{/snippet}
 					</Form.Control>
 				</div>
+			{:else}
+				<EmptyInfobox>
+					<p>No subjects have been added yet.</p>
+					<p>Type in the subject name and click "Add subject".</p>
+				</EmptyInfobox>
 			{/each}
 
 			<div class="flex gap-2">
@@ -113,8 +120,5 @@
 			</div>
 		</div>
 	</Form.Fieldset>
-	<Form.Button>Register</Form.Button>
-	{#if browser}
-		<SuperDebug data={$formData} />
-	{/if}
+	<Form.Button>Register batch</Form.Button>
 </form>

@@ -1,0 +1,225 @@
+<script lang="ts" module>
+	import { z } from "zod";
+
+	// TODO: schemas need a lot more refinings
+	export const formSchema = z.object({
+		name: z.string().min(3).max(256),
+		rollNumber: z.number().min(1, "Roll number cannot be a negative number.").default(1),
+		loginId: z.string().min(4, "Too short."),
+		password: z.string().min(6, "Weak password.").max(256, "Can't be that heavy."),
+		enrolledSubjects: z.array(z.number()),
+	});
+
+	export type FormSchema = typeof formSchema;
+</script>
+
+<script lang="ts">
+	import { superForm, type Infer, type SuperValidated } from "sveltekit-superforms";
+	import { zodClient } from "sveltekit-superforms/adapters";
+	import { Input } from "$lib/components/ui/input";
+	import * as Form from "$lib/components/ui/form";
+	import { toast } from "svelte-sonner";
+	import type { getBatchWithSubjects } from "$lib/server/db";
+	import { Label } from "$lib/components/ui/label";
+	import { Checkbox } from "$lib/components/ui/checkbox";
+	import { UserPlusIcon } from "lucide-svelte";
+
+	let {
+		form: baseForm,
+		batch,
+	}: {
+		form: SuperValidated<Infer<FormSchema>>;
+		batch: NonNullable<Awaited<ReturnType<typeof getBatchWithSubjects>>>;
+	} = $props();
+
+	const form = superForm(baseForm, {
+		dataType: "json",
+		validators: zodClient(formSchema),
+		delayMs: 1000,
+		clearOnSubmit: "errors-and-message",
+		onError: (event) => {
+			if (event.result.error.message) {
+				toast.error("Something went wrong!");
+			}
+		},
+	});
+	const { form: formData, enhance, message } = form;
+
+	$effect(() => {
+		if ($message && typeof $message.ok === "boolean" && typeof $message.message === "string") {
+			toast[$message.ok ? "success" : "error"]($message.message);
+		}
+	});
+
+	const generatedLoginId = generateLoginId(batch);
+	let hasGenerated = $state<boolean>(generatedLoginId != null);
+	if (generatedLoginId != null) {
+		formData.update(
+			($form) => {
+				$form.loginId = generatedLoginId;
+				$form.password = generatedLoginId;
+				return $form;
+			},
+			{ taint: true },
+		);
+	}
+
+	let manualPassword = $state(false);
+
+	function generateLoginId({ name: batchName }: typeof batch) {
+		if (isNaN($formData.rollNumber) || $formData.rollNumber < 1) return;
+		const paddedRollNumber = $formData.rollNumber.toString().padStart(3, "0");
+		return `${batchName}${paddedRollNumber}`;
+	}
+
+	function selectSubject(subjectId: number) {
+		if (!$formData.enrolledSubjects.includes(subjectId)) {
+			$formData.enrolledSubjects = [...$formData.enrolledSubjects, subjectId];
+		}
+	}
+
+	function deselectSubject(subjectId: number) {
+		if ($formData.enrolledSubjects.includes(subjectId)) {
+			$formData.enrolledSubjects = $formData.enrolledSubjects.filter(
+				(subject) => subject !== subjectId,
+			);
+		}
+	}
+
+	function onRollNumberChange() {
+		const generated = generateLoginId(batch);
+		hasGenerated = generated != null;
+
+		if (generated != null) {
+			formData.update(
+				($form) => {
+					$form.loginId = generated;
+					if (!manualPassword) {
+						$form.password = generated;
+					}
+					return $form;
+				},
+				{ taint: true },
+			);
+		}
+	}
+</script>
+
+<form method="POST" use:enhance class="grid gap-2" autocomplete="off">
+	<div class="grid grid-cols-2 gap-2">
+		<div class="space-y-2">
+			<Label class="text-base">Batch</Label>
+			<Input disabled type="text" value={batch.name} placeholder="Batch of the student" />
+		</div>
+		<div>
+			<Form.Field {form} name="rollNumber">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label class="text-base">Roll number</Form.Label>
+						<Input
+							{...props}
+							type="number"
+							bind:value={$formData.rollNumber}
+							placeholder="Serial roll number"
+							min={1}
+							onchange={onRollNumberChange}
+							onkeyup={onRollNumberChange}
+						/>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
+		</div>
+	</div>
+
+	<Form.Field {form} name="loginId">
+		<Form.Control>
+			{#snippet children({ props })}
+				<Form.Label class="text-base">Login ID</Form.Label>
+				<Input
+					{...props}
+					type="text"
+					class="font-mono"
+					bind:value={$formData.loginId}
+					disabled
+					placeholder="Login ID"
+				/>
+			{/snippet}
+		</Form.Control>
+		<Form.FieldErrors />
+	</Form.Field>
+
+	<Form.Field {form} name="password">
+		<Form.Control>
+			{#snippet children({ props })}
+				<Form.Label class="text-base">Password</Form.Label>
+				<Input
+					{...props}
+					type="text"
+					bind:value={$formData.password}
+					class="font-mono"
+					placeholder="Account password"
+					onkeyup={() => (manualPassword = true)}
+				/>
+			{/snippet}
+		</Form.Control>
+		<Form.FieldErrors />
+
+		<div class="text-sm text-muted-foreground">
+			{#if hasGenerated == null}
+				Invalid roll number. Can't generate proper login ID.
+			{:else}
+				The user can login with the login ID <code>{hasGenerated}</code>.
+			{/if}
+		</div>
+	</Form.Field>
+
+	<Form.Field {form} name="name">
+		<Form.Control>
+			{#snippet children({ props })}
+				<Form.Label class="text-base">Student name</Form.Label>
+				<Input
+					{...props}
+					type="text"
+					bind:value={$formData.name}
+					placeholder="Full name of the student"
+				/>
+			{/snippet}
+		</Form.Control>
+		<Form.FieldErrors />
+	</Form.Field>
+
+	<Form.Fieldset {form} name="enrolledSubjects" class="space-y-0">
+		<div class="mb-4">
+			<Form.Legend class="text-base">Enrolled Subjects</Form.Legend>
+			<Form.Description>Select the subjects the student is enrolled to.</Form.Description>
+		</div>
+		<div class="space-y-4">
+			{#each batch.subjects as subject}
+				{@const checked = $formData.enrolledSubjects.includes(subject.id)}
+				<div class="flex flex-row items-center space-x-3">
+					<Form.Control>
+						{#snippet children({ props })}
+							<Checkbox
+								{...props}
+								{checked}
+								value={subject.id.toString()}
+								onCheckedChange={(checked) => {
+									if (checked) selectSubject(subject.id);
+									else deselectSubject(subject.id);
+								}}
+							/>
+							<Form.Label class="text-base font-normal">
+								{subject.name}
+							</Form.Label>
+						{/snippet}
+					</Form.Control>
+				</div>
+			{/each}
+			<Form.FieldErrors />
+		</div>
+	</Form.Fieldset>
+
+	<Form.Button><UserPlusIcon />Register student</Form.Button>
+	<!-- TODO: states for form submissions -->
+</form>

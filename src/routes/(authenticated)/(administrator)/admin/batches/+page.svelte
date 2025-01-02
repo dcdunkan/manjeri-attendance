@@ -1,36 +1,46 @@
 <script lang="ts">
 	import NavigationHeader from "$lib/components/navigation-header.svelte";
 	import { Button } from "$lib/components/ui/button";
-	import { ListPlusIcon, ListRestartIcon } from "lucide-svelte";
+	import { ListPlusIcon } from "lucide-svelte";
 	import BatchTable from "./batch-table.svelte";
+	import DataLoader from "$lib/components/data-loader.svelte";
+	import EmptyInfobox from "$lib/components/empty-infobox.svelte";
 
-	export let data;
+	let { data } = $props();
 </script>
 
 <NavigationHeader title="Batches" />
 
-<p>
-	Batches and subjects can be created or updated through here. Click one of the batches to modify
-	the subject list and other details of the batch.
-</p>
-
 <div class="flex place-items-center justify-between">
-	<div class="text-2xl font-bold">Registered batches</div>
+	<div class="text-2xl font-medium">Registered batches</div>
 	<div class="flex gap-2">
-		<Button variant="outline" class="aspect-square"><ListRestartIcon /></Button>
-		<a href="batches/new"> <Button variant="default"><ListPlusIcon /> Add batch</Button></a>
+		<!-- TODO: <Button variant="outline" class="aspect-square"><ListRestartIcon /></Button> -->
+		<a href="batches/new"> <Button variant="secondary"><ListPlusIcon /> Add batch</Button></a>
 	</div>
 </div>
 
-{#if data.batches.length > 0}
-	<BatchTable batches={data.batches} />
-{:else}
-	<div
-		class="flex place-items-center justify-center border-2 border-dashed bg-primary-foreground p-6"
-	>
-		<div class="text-center text-sm">
-			<p>No batches are registered yet.</p>
-			<p>Click "Add batch" to register a batch.</p>
-		</div>
-	</div>
-{/if}
+<p>
+	Batches and subjects can be created or updated through here. Click one of the batches to modify
+	the subject list and other details of the batch. To register a new batch, click "Add batch".
+</p>
+
+<DataLoader promise={data.batches}>
+	{#snippet loadingMessage()}
+		<div>Loading...</div>
+	{/snippet}
+
+	{#snippet showData(batches: Awaited<typeof data.batches>)}
+		{#if batches.length > 0}
+			<BatchTable {batches} />
+		{:else}
+			<EmptyInfobox>
+				<p>No batches are registered yet.</p>
+				<p>Click "Add batch" to register a batch.</p>
+			</EmptyInfobox>
+		{/if}
+	{/snippet}
+
+	{#snippet errorMessage()}
+		<div>Failed to load batches.</div>
+	{/snippet}
+</DataLoader>

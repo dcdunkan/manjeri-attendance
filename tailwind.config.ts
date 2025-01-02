@@ -59,6 +59,26 @@ const config: Config = {
 					border: "hsl(var(--sidebar-border))",
 					ring: "hsl(var(--sidebar-ring))",
 				},
+				success: {
+					DEFAULT: "hsl(var(--success-bg) / <alpha-value>)",
+					foreground: "hsl(var(--success-text) / <alpha-value>)",
+					border: "hsl(var(--success-border) / <alpha-value>)",
+				},
+				info: {
+					DEFAULT: "hsl(var(--info-bg) / <alpha-value>)",
+					foreground: "hsl(var(--info-text) / <alpha-value>)",
+					border: "hsl(var(--info-border) / <alpha-value>)",
+				},
+				warning: {
+					DEFAULT: "hsl(var(--warning-bg) / <alpha-value>)",
+					foreground: "hsl(var(--warning-text) / <alpha-value>)",
+					border: "hsl(var(--warning-border) / <alpha-value>)",
+				},
+				error: {
+					DEFAULT: "hsl(var(--error-bg) / <alpha-value>)",
+					foreground: "hsl(var(--error-text) / <alpha-value>)",
+					border: "hsl(var(--error-border) / <alpha-value>)",
+				},
 			},
 			borderRadius: {
 				xl: "calc(var(--radius) + 4px)",
@@ -69,6 +89,7 @@ const config: Config = {
 			fontFamily: {
 				sans: ["Geist", ...fontFamily.sans],
 				mono: ['"Geist Mono"', ...fontFamily.mono],
+				serif: ['"Crimson Pro"' /*'"EB Garamond"' */, ...fontFamily.serif],
 			},
 			keyframes: {
 				"accordion-down": {

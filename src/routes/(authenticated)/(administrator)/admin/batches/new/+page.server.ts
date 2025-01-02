@@ -33,11 +33,12 @@ export const actions: Actions = {
 				.insert(tables.subjects)
 				.values(subjects.map((subject) => ({ name: subject, batchId: batch.id })));
 			batchId = batch.id;
+			// Can't redirect here, since it `throw`s.
 		} catch (error) {
 			console.error(error);
 			return fail(400, { form });
 		}
 
-		redirect(303, `/admin/batches/${batchId}`);
+		return redirect(303, `/admin/batches/${batchId}`);
 	},
 };
