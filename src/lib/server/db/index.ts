@@ -25,6 +25,18 @@ export async function getBatches() {
 	});
 }
 
+export async function getStudents(batchId: number) {
+	return await db.query.students.findMany({
+		where: () => eq(s.students.batchId, batchId),
+		extras: {
+			enrollments: db
+				.$count(s.enrollments, sql`enrollments.student_id = students.id`.mapWith(Number))
+				.mapWith(Number)
+				.as("enrollments"),
+		},
+	});
+}
+
 export async function getBatchWithSubjects(batchId: number) {
 	return await db.query.batches.findFirst({
 		where: eq(s.batches.id, batchId),
