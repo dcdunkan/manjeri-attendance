@@ -13,7 +13,7 @@ import {
 	generateSessionToken,
 	setSessionTokenCookie,
 } from "$lib/server/auth";
-import { routes } from "$lib/utils";
+import { routes } from "$lib/constants";
 
 export const load: PageServerLoad = async () => {
 	return {

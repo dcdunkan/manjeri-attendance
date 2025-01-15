@@ -1,6 +1,6 @@
 import { redirect, type Handle } from "@sveltejs/kit";
 import * as auth from "$lib/server/auth";
-import { routes } from "$lib/utils";
+import { routes } from "$lib/constants";
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const route = event.url.pathname;
