@@ -1,6 +1,7 @@
 <script lang="ts" module>
 	import { z } from "zod";
 
+	// TODO: trim the inputs.
 	export const formSchema = z.object({
 		userId: z.string().min(2).max(50),
 		password: z.string().min(6).max(256),
@@ -35,7 +36,7 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Your ID</Form.Label>
-						<Input {...props} bind:value={$formData.userId} />
+						<Input {...props} bind:value={$formData.userId} autocomplete="off" />
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
@@ -53,7 +54,7 @@
 						<Input
 							{...props}
 							type="password"
-							autocomplete="off"
+							autocomplete="new-password"
 							bind:value={$formData.password}
 							class="font-bold tracking-widest"
 						/>

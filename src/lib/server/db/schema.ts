@@ -13,6 +13,8 @@ import {
 
 export const accountRoleEnum = pgEnum("account_roles", ["administrator", "student"]);
 
+export type AccountRole = (typeof accountRoleEnum.enumValues)[number];
+
 export const accounts = pgTable(
 	"accounts",
 	{

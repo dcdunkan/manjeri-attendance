@@ -37,6 +37,4 @@
 
 <AttendanceCard />
 
-<div>
-	<Menu items={menuItems} />
-</div>
+<Menu items={menuItems} />

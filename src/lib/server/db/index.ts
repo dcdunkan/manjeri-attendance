@@ -3,7 +3,7 @@ import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
 import * as schema from "./schema";
 import { and, eq, sql } from "drizzle-orm";
-import { Argon2id } from "oslo/password";
+import { hashPassword } from "../auth";
 
 const connectionString = DATABASE_URL;
 if (!connectionString) throw new Error("DATABASE_URL is not set");
@@ -12,13 +12,14 @@ const neonClient = neon(connectionString);
 export const db = drizzle({ client: neonClient, casing: "snake_case", schema: schema });
 
 // Setup the administrator account.
+// TODO: refactor this shit.
 (async () => {
 	const results = await db.query.accounts.findMany({
 		where: () => eq(schema.accounts.role, "administrator"),
 	});
 	if (results.length == 0) {
 		console.log("Found no administrator account. Creating...");
-		const hash = await new Argon2id().hash(ADMIN_PASSWORD);
+		const hash = await hashPassword(ADMIN_PASSWORD);
 		await db.insert(schema.accounts).values({
 			login: ADMIN_LOGIN,
 			passwordHash: hash,
@@ -28,7 +29,7 @@ export const db = drizzle({ client: neonClient, casing: "snake_case", schema: sc
 		// shouldn't be happening, ONLY one.
 		console.log("Found more than one administrator account. Deleting...");
 		await db.delete(schema.accounts).where(eq(schema.accounts.role, "administrator"));
-		const hash = await new Argon2id().hash(ADMIN_PASSWORD);
+		const hash = await hashPassword(ADMIN_PASSWORD);
 		await db.insert(schema.accounts).values({
 			login: ADMIN_LOGIN,
 			passwordHash: hash,

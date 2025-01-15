@@ -4,10 +4,21 @@ import * as tables from "$lib/server/db/schema";
 import { db } from "$lib/server/db";
 import { eq } from "drizzle-orm";
 import type { RequestEvent } from "@sveltejs/kit";
+import { Argon2id } from "oslo/password";
 
 const DAY_IN_MS = 1000 * 60 * 60 * 24;
 const EXPIRATION_PERIOD = 30 * DAY_IN_MS;
 const RENEW_PERIOD = 15 * DAY_IN_MS;
+
+const argon = new Argon2id();
+
+export function hashPassword(password: string) {
+	return argon.hash(password);
+}
+
+export function verifyHash(hash: string, password: string) {
+	return argon.verify(hash, password);
+}
 
 export const sessionCookieName = "auth-session";
 
