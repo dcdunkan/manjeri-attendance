@@ -2,7 +2,6 @@ import { relations } from "drizzle-orm";
 import {
 	boolean,
 	date,
-	index,
 	integer,
 	pgEnum,
 	pgTable,
@@ -23,7 +22,7 @@ export const accounts = pgTable(
 		passwordHash: text("password_hash").notNull(),
 		role: accountRoleEnum("role").notNull(),
 	},
-	(table) => [uniqueIndex("account_idx").on(table.login)],
+	(table) => [uniqueIndex("login_idx").on(table.login)],
 );
 
 export const accountsRelations = relations(accounts, ({ one, many }) => ({
@@ -39,17 +38,13 @@ export const accountsRelations = relations(accounts, ({ one, many }) => ({
 
 // TODO: Limit the number of sessions that can be created for one account.
 // Otherwise, it can be used to populate the database in unwanted ways.
-export const sessions = pgTable(
-	"sessions",
-	{
-		id: text("id").primaryKey(),
-		accountId: integer("account_id")
-			.notNull()
-			.references(() => accounts.id),
-		expiresAt: timestamp("expires_at", { mode: "date", withTimezone: true }).notNull(),
-	},
-	(table) => [uniqueIndex("account_session_idx").on(table.accountId)],
-);
+export const sessions = pgTable("sessions", {
+	id: text("id").primaryKey(),
+	accountId: integer("account_id")
+		.notNull()
+		.references(() => accounts.id),
+	expiresAt: timestamp("expires_at", { mode: "date", withTimezone: true }).notNull(),
+});
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
 	// Multiple sessions can be linked to an account:
@@ -128,22 +123,15 @@ export const subjectsRelations = relations(subjects, ({ one, many }) => ({
 	absents: many(absentees, { relationName: "subject_absents" }),
 }));
 
-export const enrollments = pgTable(
-	"enrollments",
-	{
-		id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-		subjectId: integer("subject_id")
-			.notNull()
-			.references(() => subjects.id),
-		studentId: integer("student_id")
-			.notNull()
-			.references(() => students.id),
-	},
-	(table) => [
-		index("enrollment_subject_id_idx").on(table.subjectId),
-		index("enrollment_student_id_idx").on(table.studentId),
-	],
-);
+export const enrollments = pgTable("enrollments", {
+	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+	subjectId: integer("subject_id")
+		.notNull()
+		.references(() => subjects.id),
+	studentId: integer("student_id")
+		.notNull()
+		.references(() => students.id),
+});
 
 export const enrollmentsRelations = relations(enrollments, ({ one }) => ({
 	// A student is enrolled to a single subject.
@@ -159,17 +147,13 @@ export const enrollmentsRelations = relations(enrollments, ({ one }) => ({
 	}),
 }));
 
-export const periods = pgTable(
-	"periods",
-	{
-		id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-		subjectId: integer("subject_id")
-			.notNull()
-			.references(() => subjects.id),
-		date: date("date", { mode: "date" }).notNull(),
-	},
-	(table) => [index("period_subject_id_idx").on(table.subjectId)],
-);
+export const periods = pgTable("periods", {
+	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+	subjectId: integer("subject_id")
+		.notNull()
+		.references(() => subjects.id),
+	date: date("date", { mode: "date" }).notNull(),
+});
 
 export const periodsRelations = relations(periods, ({ one, many }) => ({
 	// A period is linked to a subject
