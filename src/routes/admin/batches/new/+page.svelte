@@ -1,9 +1,9 @@
 <script lang="ts">
 	import NavigationHeader from "$lib/components/navigation-header.svelte";
 	import BatchForm from "./batch-form.svelte";
-	import type { PageData } from "./$types.js";
+	import type { PageData } from "./$types";
 
-	export let data: PageData;
+	let { data }: { data: PageData } = $props();
 </script>
 
 <NavigationHeader title="New Batch" />

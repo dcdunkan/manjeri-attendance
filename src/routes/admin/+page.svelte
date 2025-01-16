@@ -27,6 +27,7 @@
 			title: "Logout",
 			description: "Log out of your account.",
 			icon: LogOutIcon,
+			preload: false,
 		},
 	];
 </script>

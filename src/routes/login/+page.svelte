@@ -1,7 +1,8 @@
 <script lang="ts">
-	import type { PageData } from "./$types.js";
+	import type { PageData } from "./$types";
 	import LoginForm from "./login-form.svelte";
-	export let data: PageData;
+
+	let { data }: { data: PageData } = $props();
 </script>
 
 <LoginForm data={data.form} />

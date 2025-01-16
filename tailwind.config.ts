@@ -89,7 +89,7 @@ const config: Config = {
 			fontFamily: {
 				sans: ["Geist", ...fontFamily.sans],
 				mono: ['"Geist Mono"', ...fontFamily.mono],
-				serif: ['"Crimson Pro"' /*'"EB Garamond"' */, ...fontFamily.serif],
+				serif: ['"EB Garamond"', ...fontFamily.serif],
 			},
 			keyframes: {
 				"accordion-down": {

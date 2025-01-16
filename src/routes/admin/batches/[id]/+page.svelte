@@ -1,7 +1,7 @@
 <script lang="ts">
 	import NavigationHeader from "$lib/components/navigation-header.svelte";
 	import { ArrowRightIcon, BookUserIcon, EditIcon, Icon, UserPlusIcon } from "lucide-svelte";
-	import type { PageData } from "./$types.js";
+	import type { PageData } from "./$types";
 	import { Button } from "$lib/components/ui/button";
 	import DataLoader from "$lib/components/data-loader.svelte";
 	import EmptyInfobox from "$lib/components/empty-infobox.svelte";
