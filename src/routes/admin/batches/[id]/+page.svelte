@@ -98,7 +98,7 @@
 		{/if}
 	{/snippet}
 
-	{#snippet errorMessage(error: any)}
+	{#snippet errorMessage()}
 		<div>Failed to load batch information.</div>
 	{/snippet}
 </DataLoader>

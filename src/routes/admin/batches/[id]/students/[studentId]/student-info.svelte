@@ -2,9 +2,8 @@
 	import type { getStudent } from "$lib/server/db";
 	import * as Table from "$lib/components/ui/table";
 	import { Button } from "$lib/components/ui/button";
-	import { ArrowRightIcon, CheckIcon, EditIcon, InfoIcon, MinusIcon } from "lucide-svelte";
+	import { CheckIcon, EditIcon, MinusIcon } from "lucide-svelte";
 	import EmptyInfobox from "$lib/components/empty-infobox.svelte";
-	import * as Alert from "$lib/components/ui/alert";
 
 	interface Props {
 		student: NonNullable<Awaited<ReturnType<typeof getStudent>>>;

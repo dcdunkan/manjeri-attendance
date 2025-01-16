@@ -3,13 +3,13 @@
 	import LoadingCard from "./loading-card.svelte";
 	import LoadingFailedCard from "./loading-failed-card.svelte";
 
-	interface Props {
+	interface Props<T> {
 		promise: Promise<T>;
 		showData: Snippet<[Awaited<T>]>;
 		loadingMessage: Snippet;
 		errorMessage: Snippet<[any]>;
 	}
-	let { promise, showData, loadingMessage, errorMessage }: Props = $props();
+	let { promise, showData, loadingMessage, errorMessage }: Props<T> = $props();
 </script>
 
 {#await promise}

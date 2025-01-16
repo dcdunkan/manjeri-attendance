@@ -77,7 +77,7 @@
 		</div>
 		<div class="space-y-2">
 			<Form.FieldErrors />
-			{#each $formData.subjects as subject, i}
+			{#each $formData.subjects as subject, i (i)}
 				{@const checked = $formData.subjects.includes(subject)}
 				<div class="flex flex-row items-start">
 					<Form.Control>

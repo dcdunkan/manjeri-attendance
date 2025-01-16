@@ -12,16 +12,6 @@
 			name: string;
 		}[];
 	} = $props();
-
-	const total = batches.reduce(
-		(prev, batch) => {
-			return {
-				students: prev.students + batch.studentCount,
-				subjects: prev.subjects + batch.subjectCount,
-			};
-		},
-		{ students: 0, subjects: 0 },
-	);
 </script>
 
 <Table.Root>
