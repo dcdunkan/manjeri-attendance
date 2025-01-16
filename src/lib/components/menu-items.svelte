@@ -16,7 +16,8 @@
 <!-- this used to be a snippet -->
 <div>
 	{#each items as item}
-		<a href={item.path} data-sveltekit-preload-data={item.preload === false ? "off" : "hover"}>
+		{@const preloadState: "off" | "hover" = item.preload ? "hover" : "off"};
+		<a href={item.path} data-sveltekit-preload-data={preloadState}>
 			<div
 				class="flex place-items-center justify-between gap-4 border-b-2 border-transparent px-2 py-4 transition-all duration-200 hover:border-primary"
 			>
