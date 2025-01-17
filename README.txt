@@ -3,6 +3,6 @@ refinements needed:
 - redo navigation bar
 
 todos:
-- student profile
+- student dashboard
 - representations
 - attendance calculation

@@ -9,8 +9,21 @@ export const load: PageServerLoad = (event) => {
 
 	const { batchId, id } = event.locals.account.student;
 
+	async function attendanceOverview() {
+		const student = await getStudent(batchId, id);
+		// TODO: make a way to show these fails in the `errorMessage` snippet.
+		if (student == null) throw new Error("Failed to get student details.");
+		return student.enrollments.reduce(
+			(overview, { subject }) => ({
+				total: overview.total + subject.periodCount,
+				attended: overview.attended + (subject.periodCount - subject.asbentCount),
+			}),
+			{ total: 0, attended: 0 },
+		);
+	}
+
 	return {
 		local: event.locals.account.student,
-		details: getStudent(batchId, id),
+		attendance: attendanceOverview(),
 	};
 };

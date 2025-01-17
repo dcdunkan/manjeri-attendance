@@ -114,7 +114,7 @@
 								enrollment.subject.periodCount - enrollment.subject.asbentCount,
 								enrollment.subject.periodCount,
 							) * 100
-						).toFixed(1)} %</Table.Cell
+						).toFixed(2)} %</Table.Cell
 					>
 				</Table.Row>
 			{/each}
