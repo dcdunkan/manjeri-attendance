@@ -3,7 +3,8 @@ import { zod } from "sveltekit-superforms/adapters";
 import type { PageServerLoad, Actions } from "./$types";
 import { formSchema } from "./student-form.svelte";
 import { error } from "@sveltejs/kit";
-import { db, getBatchWithSubjects } from "$lib/server/db";
+import { db } from "$lib/server/db";
+import { getBatchWithSubjects } from "$lib/server/db/batches";
 import * as tables from "$lib/server/db/schema";
 import { redirect } from "@sveltejs/kit";
 import { and, eq } from "drizzle-orm";
@@ -46,6 +47,7 @@ export const actions: Actions = {
 
 			const passwordHash = await new Argon2id().hash(form.data.password);
 
+			// TODO: Make all the DB transactions abstractions & repositories
 			const [account] = await db
 				.insert(tables.accounts)
 				.values({

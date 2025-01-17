@@ -1,4 +1,4 @@
-import { getStudent } from "$lib/server/db";
+import { getStudent } from "$lib/server/db/students";
 import type { PageServerLoad } from "./$types";
 import { error } from "@sveltejs/kit";
 

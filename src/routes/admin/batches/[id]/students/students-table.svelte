@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from "$app/navigation";
 	import * as Table from "$lib/components/ui/table";
-	import type { getStudents } from "$lib/server/db";
+	import type { getStudents } from "$lib/server/db/students";
 
 	const { students }: { students: Awaited<ReturnType<typeof getStudents>> } = $props();
 </script>

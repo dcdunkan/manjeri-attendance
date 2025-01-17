@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { getStudent } from "$lib/server/db";
+	import type { getStudent } from "$lib/server/db/students";
 	import * as Table from "$lib/components/ui/table";
 	import { Button } from "$lib/components/ui/button";
 	import { CheckIcon, EditIcon, MinusIcon } from "lucide-svelte";

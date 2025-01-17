@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { PageData } from "./$types";
 	import { CalendarCheck2Icon, LogOutIcon, UserCogIcon } from "lucide-svelte";
 	import AttendanceCard from "./attendance-card.svelte";
 	import { type MenuItem, default as Menu } from "$lib/components/menu-items.svelte";
@@ -24,11 +25,13 @@
 			preload: false,
 		},
 	];
+
+	let { data }: { data: PageData } = $props();
 </script>
 
 <div>
 	<div class="text-lg">Hello there</div>
-	<div class="truncate text-4xl font-medium">Sheron Rajesh</div>
+	<div class="truncate text-4xl font-medium">{data.local.fullName}</div>
 </div>
 
 <div>

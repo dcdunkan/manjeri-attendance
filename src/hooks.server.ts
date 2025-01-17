@@ -44,11 +44,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 	}
 
 	// The role must meet the route.
+	// If it starts with the administrator route's root:
 	if (route.startsWith(routes.administrator)) {
 		if (event.locals.account.role !== "administrator") {
 			return redirect(303, routes.dashboard);
 		}
 	} else {
+		// Administrator isn't allowed to use those student routes either.
+		// Which is everything except $constants/routes.administrator.
 		if (event.locals.account.role !== "student") {
 			return redirect(303, routes.administrator);
 		}

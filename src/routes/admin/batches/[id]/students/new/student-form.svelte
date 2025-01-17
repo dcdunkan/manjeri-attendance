@@ -19,7 +19,7 @@
 	import { Input } from "$lib/components/ui/input";
 	import * as Form from "$lib/components/ui/form";
 	import { toast } from "svelte-sonner";
-	import type { getBatchWithSubjects } from "$lib/server/db";
+	import type { getBatchWithSubjects } from "$lib/server/db/batches";
 	import { Label } from "$lib/components/ui/label";
 	import { Checkbox } from "$lib/components/ui/checkbox";
 	import { UserPlusIcon } from "lucide-svelte";
