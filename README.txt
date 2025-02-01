@@ -4,6 +4,7 @@ refinements needed:
 - redis integration in most pages
 
 todos:
+
 [ ] representations
     [x] promote / demote
     [ ] mark attendance
@@ -12,4 +13,8 @@ todos:
     [ ] subject name editor dialog
     [x] make it reactive
     [ ] delist the student
-[x] attendance calculation
+[ ] viewing attendance
+    [x] calculate attendance
+    [ ] calendar wise view
+    [ ] subject wise view
+[ ] account settings
