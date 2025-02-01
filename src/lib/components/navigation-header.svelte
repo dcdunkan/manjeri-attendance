@@ -51,7 +51,8 @@
 				{:else}
 					<Breadcrumb.Item class="hidden md:block">
 						<Breadcrumb.Link href="/{segments.slice(0, i + 1).join('/')}"
-							>{SEGMENT_TITLES[segment] ?? segment}</Breadcrumb.Link
+							>{SEGMENT_TITLES[segment] ??
+								segment[0].toUpperCase() + segment.slice(1)}</Breadcrumb.Link
 						>
 					</Breadcrumb.Item>
 					<Breadcrumb.Separator class="hidden md:block" />

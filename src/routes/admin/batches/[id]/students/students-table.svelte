@@ -11,8 +11,8 @@
 		<Table.Row>
 			<Table.Head>ID</Table.Head>
 			<Table.Head>Student Name</Table.Head>
-			<Table.Head>Roll number</Table.Head>
-			<Table.Head class="text-right">Enrollments</Table.Head>
+			<Table.Head class="text-center">Roll number</Table.Head>
+			<Table.Head class="text-center">Enrollments</Table.Head>
 		</Table.Row>
 	</Table.Header>
 	<Table.Body>
@@ -23,8 +23,8 @@
 			>
 				<Table.Cell class="font-medium">{student.id}</Table.Cell>
 				<Table.Cell>{student.fullName}</Table.Cell>
-				<Table.Cell>{student.rollNumber}</Table.Cell>
-				<Table.Cell class="text-right">{student.enrollments}</Table.Cell>
+				<Table.Cell class="text-center">{student.rollNumber}</Table.Cell>
+				<Table.Cell class="text-center">{student.enrollments}</Table.Cell>
 			</Table.Row>
 		{/each}
 	</Table.Body>

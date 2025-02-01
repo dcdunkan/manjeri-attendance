@@ -23,6 +23,7 @@ export async function getStudent(batchId: number, studentId: number) {
 			account: {
 				columns: {
 					login: true,
+					passwordHash: false,
 				},
 			},
 			batch: true,

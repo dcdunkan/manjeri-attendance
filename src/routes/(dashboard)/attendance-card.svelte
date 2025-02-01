@@ -1,12 +1,9 @@
 <script lang="ts">
 	import { routes } from "$lib/constants";
+	import { safeDivision } from "$lib/helpers";
 	import type { PageData } from "./$types";
 
-	let { attendanceData }: { attendanceData: Awaited<PageData["attendance"]> } = $props();
-
-	function safeDivision(numerator: number, denominator: number) {
-		return denominator == 0 ? 0 : numerator / denominator;
-	}
+	let { attendanceData }: { attendanceData: Awaited<PageData["details"]>["attendance"] } = $props();
 </script>
 
 <a href={routes.attendance}>

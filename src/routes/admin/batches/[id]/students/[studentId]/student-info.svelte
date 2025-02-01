@@ -4,6 +4,7 @@
 	import { Button } from "$lib/components/ui/button";
 	import { CheckIcon, EditIcon, MinusIcon } from "lucide-svelte";
 	import EmptyInfobox from "$lib/components/empty-infobox.svelte";
+	import { safeDivision } from "$lib/helpers";
 
 	interface Props {
 		student: NonNullable<Awaited<ReturnType<typeof getStudent>>>;
@@ -13,10 +14,6 @@
 
 	function pluralize(count: number, singular: string, plural: string) {
 		return count == 1 ? singular : plural;
-	}
-
-	function safeDivision(numerator: number, denominator: number) {
-		return denominator == 0 ? 0 : numerator / denominator;
 	}
 
 	function isRepresentative(subjectId: number) {
@@ -94,6 +91,8 @@
 		</Table.Header>
 		<Table.Body>
 			{#each student.enrollments as enrollment, i}
+				{@const classes = enrollment.subject.periodCount}
+				{@const attended = enrollment.subject.periodCount - enrollment.subject.asbentCount}
 				<Table.Row>
 					<Table.Cell class="text-muted-foreground">{i + 1}</Table.Cell>
 					<Table.Cell>{enrollment.subject.name}</Table.Cell>
@@ -102,20 +101,12 @@
 							<CheckIcon class="inline-block size-4" />
 						{:else}
 							<MinusIcon class="inline-block size-4" />
-						{/if}</Table.Cell
-					>
-					<Table.Cell class="text-center"
-						>{enrollment.subject.periodCount - enrollment.subject.asbentCount} / {enrollment.subject
-							.periodCount}</Table.Cell
-					>
-					<Table.Cell class="text-center"
-						>{(
-							safeDivision(
-								enrollment.subject.periodCount - enrollment.subject.asbentCount,
-								enrollment.subject.periodCount,
-							) * 100
-						).toFixed(2)} %</Table.Cell
-					>
+						{/if}
+					</Table.Cell>
+					<Table.Cell class="text-center">{attended} / {classes}</Table.Cell>
+					<Table.Cell class="text-center">
+						{(safeDivision(attended, classes) * 100).toFixed(2)} %
+					</Table.Cell>
 				</Table.Row>
 			{/each}
 		</Table.Body>

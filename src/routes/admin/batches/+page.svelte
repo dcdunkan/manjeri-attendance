@@ -26,7 +26,7 @@
 
 <DataLoader promise={data.batches}>
 	{#snippet loadingMessage()}
-		<div>Loading...</div>
+		<div>Loading batches...</div>
 	{/snippet}
 
 	{#snippet showData(batches: Awaited<typeof data.batches>)}

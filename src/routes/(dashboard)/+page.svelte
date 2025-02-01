@@ -1,10 +1,13 @@
 <script lang="ts">
 	import type { PageData } from "./$types";
-	import { CalendarCheck2Icon, CircleCheckIcon, LogOutIcon, UserCogIcon } from "lucide-svelte";
+	import { ArrowRightIcon, CalendarCheck2Icon, LogOutIcon, UserCogIcon } from "lucide-svelte";
 	import AttendanceCard from "./attendance-card.svelte";
 	import { type MenuItem, default as Menu } from "$lib/components/menu-items.svelte";
 	import DataLoader from "$lib/components/data-loader.svelte";
 	import { routes } from "$lib/constants";
+	import NavigationHeader from "$lib/components/navigation-header.svelte";
+
+	let { data }: { data: PageData } = $props();
 
 	const menuItems: MenuItem[] = [
 		{
@@ -12,12 +15,6 @@
 			title: "Attendance",
 			description: "Review attendance status of each subjects.",
 			icon: CalendarCheck2Icon,
-		},
-		{
-			path: routes.updateAttendance,
-			title: "Update Attendance",
-			description: "Update attendance of the subjects that you represent.",
-			icon: CircleCheckIcon,
 		},
 		{
 			path: routes.accountSettings,
@@ -33,33 +30,56 @@
 			preload: false,
 		},
 	];
-
-	let { data }: { data: PageData } = $props();
 </script>
 
-<div>
-	<div class="text-lg">Hello there</div>
-	<!-- TODO: algorithm for display name -->
-	<div class="truncate text-4xl font-medium">{data.local.fullName}</div>
+<NavigationHeader title="Dashboard" />
+
+<div class="mb-4">
+	<div class="text-muted-foreground">You're logged in as</div>
+	<!-- TODO: algorithm for display name, or just make an account setting? -->
+	<div class="mt-1 truncate text-3xl">{data.local.fullName}</div>
 </div>
 
-<div>
-	This is your dashboard. You can choose one of the available sections shown below to view more
-	regarding it.
-</div>
-
-<DataLoader promise={data.attendance}>
+<DataLoader promise={data.details}>
 	{#snippet loadingMessage()}
-		<div>Loading attendance overview...</div>
+		<div>Loading student details...</div>
 	{/snippet}
 
-	{#snippet showData(attendanceData)}
-		<AttendanceCard {attendanceData} />
+	{#snippet showData(details)}
+		<AttendanceCard attendanceData={details.attendance} />
+
+		{#if details.representations.length > 0}
+			<div>
+				<div class="mb-4 space-y-2">
+					<div class="font-medium text-muted-foreground">Update attendance</div>
+					<p>
+						Below are the subjects that you are a representative of. Choose one to update the
+						attendance of your batchmates.
+					</p>
+				</div>
+				<div class="grid grid-cols-2 gap-2">
+					{#each details.representations as representation}
+						<div
+							class="flex place-items-center justify-between rounded border p-4 transition-all duration-200 hover:border-primary"
+						>
+							<div>{details.subjects[representation.subjectId].name}</div>
+							<div><ArrowRightIcon /></div>
+						</div>
+					{/each}
+				</div>
+			</div>
+		{/if}
+
+		<div>
+			<div class="mb-4 space-y-2">
+				<div class="font-medium text-muted-foreground">Student Menu</div>
+				<p>You can choose one of the available sections shown below to view more regarding it.</p>
+			</div>
+			<Menu items={menuItems} />
+		</div>
 	{/snippet}
 
 	{#snippet errorMessage()}
-		<div>Failed to load attendance overview.</div>
+		<div>Failed to load student details.</div>
 	{/snippet}
 </DataLoader>
-
-<Menu items={menuItems} />

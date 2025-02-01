@@ -3,6 +3,7 @@ export const routes = {
 	logout: "/logout",
 
 	administrator: "/admin",
+	adminApis: "/api/admin/",
 
 	dashboard: "/",
 	attendance: "/attendance",

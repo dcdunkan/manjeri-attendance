@@ -1,4 +1,4 @@
-import { redirect, type Handle } from "@sveltejs/kit";
+import { error, redirect, type Handle } from "@sveltejs/kit";
 import * as auth from "$lib/server/auth";
 import { routes } from "$lib/constants";
 
@@ -41,6 +41,12 @@ export const handle: Handle = async ({ event, resolve }) => {
 			default:
 				return redirect(303, routes.logout);
 		}
+	}
+
+	if (route.startsWith(routes.adminApis)) {
+		if (event.locals.account.role === "administrator") {
+			return resolve(event);
+		} else return error(403, "Forbidden");
 	}
 
 	// The role must meet the route.

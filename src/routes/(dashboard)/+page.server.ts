@@ -9,21 +9,30 @@ export const load: PageServerLoad = (event) => {
 
 	const { batchId, id } = event.locals.account.student;
 
-	async function attendanceOverview() {
+	async function filteredStudentDetails() {
 		const student = await getStudent(batchId, id);
 		// TODO: make a way to show these fails in the `errorMessage` snippet.
 		if (student == null) throw new Error("Failed to get student details.");
-		return student.enrollments.reduce(
-			(overview, { subject }) => ({
-				total: overview.total + subject.periodCount,
-				attended: overview.attended + (subject.periodCount - subject.asbentCount),
-			}),
-			{ total: 0, attended: 0 },
-		);
+
+		return {
+			subjects: Object.fromEntries(
+				student.enrollments.map((enroll) => {
+					return [enroll.subject.id, enroll.subject];
+				}),
+			),
+			representations: student.representations,
+			attendance: student.enrollments.reduce(
+				(overview, { subject }) => ({
+					total: overview.total + subject.periodCount,
+					attended: overview.attended + (subject.periodCount - subject.asbentCount),
+				}),
+				{ total: 0, attended: 0 },
+			),
+		};
 	}
 
 	return {
 		local: event.locals.account.student,
-		attendance: attendanceOverview(),
+		details: filteredStudentDetails(),
 	};
 };

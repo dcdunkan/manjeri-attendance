@@ -95,5 +95,5 @@ export function setSessionTokenCookie(event: RequestEvent, token: string, expire
 }
 
 export function deleteSessionTokenCookie(event: RequestEvent) {
-	event.cookies.delete(sessionCookieName, { path: "/" });
+	event.cookies.delete(sessionCookieName, { path: "/", secure: import.meta.env.PROD });
 }
