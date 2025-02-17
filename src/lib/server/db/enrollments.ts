@@ -12,10 +12,12 @@ export async function getEnrolledStudents(batchId: number, subjectId: number) {
 					absentCount: db
 						.$count(
 							schema.absentees,
-							sql.raw(
-								`"absentees"."subject_id" = "enrollments"."subject_id"
+							sql
+								.raw(
+									`"absentees"."subject_id" = "enrollments"."subject_id"
                                   AND "absentees"."student_id" = "enrollments_student"."id"`,
-							),
+								)
+								.mapWith(Number),
 						)
 						.as("absent_count"),
 				},

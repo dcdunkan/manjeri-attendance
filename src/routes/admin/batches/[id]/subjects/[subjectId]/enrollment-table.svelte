@@ -1,7 +1,7 @@
 <script lang="ts">
 	import * as Table from "$lib/components/ui/table/index";
 	import { CheckIcon, MinusIcon } from "lucide-svelte";
-	import { safeDivision } from "$lib/helpers";
+	import { cutePercent, safeDivision } from "$lib/helpers";
 	import PromoteDialog from "./promote-dialog.svelte";
 	import type { getEnrolledStudents } from "$lib/server/db/enrollments";
 	import type { getSubject } from "$lib/server/db/subjects";
@@ -51,7 +51,7 @@
 				<Table.Cell class="text-center">
 					{@const classes = Number(subject.periodCount)}
 					{@const attended = classes - enrollment.student.absentCount}
-					{(safeDivision(attended, classes) * 100).toFixed(2)} % ({attended} / {classes})
+					{cutePercent(safeDivision(attended, classes) * 100)} % ({attended} / {classes})
 				</Table.Cell>
 				<Table.Cell class="text-center">
 					<PromoteDialog {subject} {enrollment} {representatives} />

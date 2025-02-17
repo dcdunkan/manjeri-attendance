@@ -7,11 +7,13 @@
 	import EnrollmentTable from "./enrollment-table.svelte";
 
 	let { data }: { data: PageData } = $props();
+
+	const groupedPromises = Promise.all([data.subject, data.students]);
 </script>
 
 <NavigationHeader title="Details" />
 
-<DataLoader promise={data.details}>
+<DataLoader promise={groupedPromises}>
 	{#snippet loadingMessage()}
 		<div>Loading list of enrollments...</div>
 	{/snippet}
@@ -26,6 +28,7 @@
 			can use the actions button next to each enrollment in order to promote / demote the
 			representative role, or delist the enrollment of the student.
 		</p>
+
 		<EnrollmentTable {subject} {enrollments} />
 	{/snippet}
 

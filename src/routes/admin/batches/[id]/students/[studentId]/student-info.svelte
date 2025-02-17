@@ -4,7 +4,7 @@
 	import { Button } from "$lib/components/ui/button";
 	import { CheckIcon, EditIcon, MinusIcon } from "lucide-svelte";
 	import EmptyInfobox from "$lib/components/empty-infobox.svelte";
-	import { safeDivision } from "$lib/helpers";
+	import { cutePercent, safeDivision } from "$lib/helpers";
 
 	interface Props {
 		student: NonNullable<Awaited<ReturnType<typeof getStudent>>>;
@@ -105,7 +105,7 @@
 					</Table.Cell>
 					<Table.Cell class="text-center">{attended} / {classes}</Table.Cell>
 					<Table.Cell class="text-center">
-						{(safeDivision(attended, classes) * 100).toFixed(2)} %
+						{cutePercent(safeDivision(attended, classes) * 100)} %
 					</Table.Cell>
 				</Table.Row>
 			{/each}

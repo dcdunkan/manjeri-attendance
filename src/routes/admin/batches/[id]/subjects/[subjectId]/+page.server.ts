@@ -12,6 +12,7 @@ export const load: PageServerLoad = async (event) => {
 	}
 
 	return {
-		details: Promise.all([getSubject(batchId, subjectId), getEnrolledStudents(batchId, subjectId)]),
+		subject: getSubject(batchId, subjectId),
+		students: getEnrolledStudents(batchId, subjectId),
 	};
 };

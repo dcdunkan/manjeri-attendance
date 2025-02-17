@@ -14,10 +14,15 @@ export async function getSubject(batchId: number, subjectId: number) {
 		},
 		extras: {
 			enrollmentCount: db
-				.$count(schema.enrollments, sql.raw(`"enrollments"."subject_id" = "subjects"."id"`))
+				.$count(
+					schema.enrollments,
+					sql.raw(`"enrollments"."subject_id" = "subjects"."id"`).mapWith(Number),
+				)
+				.mapWith(Number)
 				.as("enrollment_count"),
 			periodCount: db
-				.$count(schema.periods, sql.raw(`"periods"."subject_id" = "subjects"."id"`))
+				.$count(schema.periods, sql.raw(`"periods"."subject_id" = "subjects"."id"`).mapWith(Number))
+				.mapWith(Number)
 				.as("period_count"),
 		},
 	});

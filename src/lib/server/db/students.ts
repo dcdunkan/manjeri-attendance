@@ -44,6 +44,7 @@ export async function getStudent(batchId: number, studentId: number) {
 									// for future reference, .toSQL() and debug the SQL statements to correct and do the following:
 									sql.raw(`"periods"."subject_id" = "students_enrollments_subject"."id"`),
 								)
+								.mapWith(Number)
 								.as("period_count"),
 							asbentCount: db
 								.$count(
@@ -53,6 +54,7 @@ export async function getStudent(batchId: number, studentId: number) {
 										AND "absentees"."student_id" = "students"."id"`,
 									),
 								)
+								.mapWith(Number)
 								.as("absent_count"),
 						},
 						columns: { batchId: false },

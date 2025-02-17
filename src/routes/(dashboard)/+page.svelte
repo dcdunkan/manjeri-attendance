@@ -45,10 +45,10 @@
 		<div>Loading student details...</div>
 	{/snippet}
 
-	{#snippet showData(details)}
-		<AttendanceCard attendanceData={details.attendance} />
+	{#snippet showData({ attendance, representations, subjects })}
+		<AttendanceCard attendanceData={attendance} />
 
-		{#if details.representations.length > 0}
+		{#if representations.length > 0}
 			<div>
 				<div class="mb-4 space-y-2">
 					<div class="font-medium text-muted-foreground">Update attendance</div>
@@ -58,13 +58,15 @@
 					</p>
 				</div>
 				<div class="grid grid-cols-2 gap-2">
-					{#each details.representations as representation}
-						<div
-							class="flex place-items-center justify-between rounded border p-4 transition-all duration-200 hover:border-primary"
-						>
-							<div>{details.subjects[representation.subjectId].name}</div>
-							<div><ArrowRightIcon /></div>
-						</div>
+					{#each representations as representation}
+						<a href="/update-attendance/{representation.subjectId}">
+							<div
+								class="flex cursor-pointer select-none place-items-center justify-between rounded border p-4 transition-all duration-200 hover:border-primary/60 hover:bg-primary/5"
+							>
+								<div>{subjects[representation.subjectId].name}</div>
+								<div><ArrowRightIcon /></div>
+							</div>
+						</a>
 					{/each}
 				</div>
 			</div>

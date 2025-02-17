@@ -17,9 +17,17 @@
 		representatives: "Representatives",
 	};
 
+	// const IGNORED = [["/update-attendance/", "update-attendance"]];
+
 	let { title }: { title: string } = $props();
 
 	const isShowable = new MediaQuery("(min-width: 768px)", true);
+
+	// function isIgnored(segment: string) {
+	// 	return IGNORED.some(
+	// 		([start, ignored]) => page.url.pathname.startsWith(start) && ignored === segment,
+	// 	);
+	// }
 </script>
 
 {#if !isShowable.current}

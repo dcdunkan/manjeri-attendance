@@ -87,8 +87,8 @@ const config: Config = {
 				sm: "calc(var(--radius) - 4px)",
 			},
 			fontFamily: {
-				sans: ["Geist", ...fontFamily.sans],
-				mono: ['"Geist Mono"', ...fontFamily.mono],
+				sans: ["FixelVariable", ...fontFamily.sans],
+				mono: [...fontFamily.mono],
 				serif: ['"EB Garamond"', ...fontFamily.serif],
 			},
 			keyframes: {
@@ -109,6 +109,10 @@ const config: Config = {
 				"accordion-down": "accordion-down 0.2s ease-out",
 				"accordion-up": "accordion-up 0.2s ease-out",
 				"caret-blink": "caret-blink 1.25s ease-out infinite",
+			},
+			transitionDuration: {
+				"25": "25ms",
+				"50": "50ms",
 			},
 		},
 	},
