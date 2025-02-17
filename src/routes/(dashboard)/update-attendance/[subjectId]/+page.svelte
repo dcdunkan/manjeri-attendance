@@ -6,7 +6,7 @@
 	import { onMount } from "svelte";
 	import type { LoadedData, Keys } from "$lib/types";
 	import SectionSwitcher from "./section-switcher.svelte";
-	import { loadData, pluralize } from "$lib/helpers";
+	import { pluralize } from "$lib/helpers";
 	import OverviewSection from "./overview-section.svelte";
 	import HistorySection from "./history-section.svelte";
 	import {

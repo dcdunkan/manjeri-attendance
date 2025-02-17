@@ -1,4 +1,4 @@
-import type { BaseDate, LoadedData } from "$lib/types";
+import type { BaseDate } from "$lib/types";
 
 const formatter = new Intl.DateTimeFormat("en-US", { weekday: "short" });
 
@@ -12,19 +12,6 @@ export function cutePercent(percent: number) {
 
 export function pluralize(count: number, singular: string, plural: string) {
 	return count == 1 ? singular : plural;
-}
-
-export async function loadData<T, K>(
-	promise: Promise<T>,
-	message: string,
-	transformer: (resolved: T) => K,
-): Promise<LoadedData<K>> {
-	try {
-		return { state: "resolved", data: transformer(await promise) };
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	} catch (error) {
-		return { state: "failed", message: message };
-	}
 }
 
 export function isValidDate(date: Date) {
