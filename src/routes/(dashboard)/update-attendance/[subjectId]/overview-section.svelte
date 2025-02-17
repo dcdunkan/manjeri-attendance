@@ -2,7 +2,7 @@
 	import * as Table from "$lib/components/ui/table";
 	import type { ArrayIndices } from "$lib/types";
 	import { ArrowDown10Icon, ArrowUp01Icon, ArrowUpDownIcon } from "lucide-svelte";
-	import type { EnrolledStudent, Subject } from "./types";
+	import type { EnrolledStudent } from "./types";
 	import SearchInput from "./search-input.svelte";
 	import { cutePercent, safeDivision } from "$lib/helpers";
 

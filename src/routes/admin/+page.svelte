@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { GraduationCapIcon, KeyRoundIcon, LogOutIcon, UsersIcon } from "lucide-svelte";
+	import { LogOutIcon, UsersIcon } from "lucide-svelte";
 	import { type MenuItem, default as Menu } from "$lib/components/menu-items.svelte";
 	import NavigationHeader from "$lib/components/navigation-header.svelte";
 

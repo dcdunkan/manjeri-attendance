@@ -58,10 +58,12 @@
 					{} as Record<number, EnrolledStudent>,
 				);
 			} catch (error) {
+				console.error(error);
 				subject = { state: "failed", message: "Could not get subject details" };
 				toast.error("Could not get subject details");
 			}
 		} catch (error) {
+			console.error(error);
 			subject = { state: "failed", message: "Could not get student data" };
 			toast.error("Could not get student data");
 		}

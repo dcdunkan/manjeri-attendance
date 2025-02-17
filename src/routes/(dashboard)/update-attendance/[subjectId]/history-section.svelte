@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { CacheMonthlyData, EnrolledStudent, Period, Subject } from "./types";
+	import type { CacheMonthlyData, EnrolledStudent, Subject } from "./types";
 	import { MONTHS, STARTING_YEAR } from "$lib/constants";
 	import * as Select from "$lib/components/ui/select";
 	import { CalendarDate, GregorianCalendar } from "@internationalized/date";

@@ -37,7 +37,7 @@
 		</Table.Row>
 	</Table.Header>
 	<Table.Body>
-		{#each enrollments as enrollment, i}
+		{#each enrollments as enrollment}
 			<Table.Row>
 				<Table.Cell class="w-fit">{enrollment.student.rollNumber}</Table.Cell>
 				<Table.Cell class="font-medium">{enrollment.student.fullName}</Table.Cell>
