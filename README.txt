@@ -1,29 +1,55 @@
-refinements needed:
-- track who & when attendance marked (attendance history schema)
-- figure out loading spinners in forms after submission. (submit state visualization)
-- redo navigation bar (fix it and make it sticky, simplify it. try to include it in layouts)
-- redis integration in most pages
-- add head-titles
-- use global stores for global data
-- switch to data tables instead of normal tables
-- extra verifications for auth in server routes
+====== ATTENDANCE SYSTEM
 
-todos:
+As per the request from students of Govt. Medical College of Manjeri.
+This SvelteKit app serves as an interface for students to view their
+attendance and student representatives to mark others' attendance, as
+they currently do not have a digital attendance system.
 
-[x] representations
-    [x] promote / demote
-    [x] see history and overview
-    [x] mark attendance
-    [x] edit old attendance
-    [x] delete period
-[ ] subject / enrollment list
-    [ ] subject name editor dialog
-    [x] make it reactive
-    [ ] delist the student
-[ ] viewing attendance
-    [x] calculate attendance
-    [x] show total in dashboard
-    [ ] calendar wise view
-    [ ] subject wise view
-[ ] account settings
-[ ] forgot password
+====== DEVELOPMENT NOTES
+
+> Roadmap (11/25)
+
+[x] Authorization
+    [x] Login & logout
+[ ] Batches
+    [x] Create batch
+    [ ] Edit batch
+    [ ] Destroy batch
+[ ] Students
+    [x] Register batch student
+    [ ] Edit student
+    [ ] Delete student from batch
+[ ] Subjects
+    [ ] Edit subject details
+    [ ] Delist students
+    [ ] Destroy subject
+[x] Representations
+    [x] Promote / demote
+    [x] See history and overview
+    [x] Mark attendance
+    [x] Edit period & attendance
+    [x] Delete period
+[ ] Subject / enrollment list
+    [ ] Subject name editor dialog
+    [x] Make it reactive
+    [ ] Delist the student
+[ ] Viewing attendance
+    [x] Calculate attendance
+    [x] Show total in dashboard
+    [ ] Calendar wise view
+    [ ] Subject wise view
+[ ] Account settings
+    [ ] Set display name
+    [ ] Modify password
+    [ ] Forgot password in login
+
+> Refinements needed:
+
+[ ] track who & when attendance marked (attendance history schema)
+[ ] figure out loading spinners in forms after submission. (submit state visualization)
+[ ] redo navigation bar (fix it and make it sticky, simplify it. try to include it in layouts)
+[ ] redis integration
+[ ] add head-titles
+[ ] use global stores for global data
+[ ] switch to data tables instead of normal tables
+[ ] extra verifications for auth in server routes

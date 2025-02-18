@@ -112,9 +112,7 @@
 
 <DropdownMenu.Root>
 	<DropdownMenu.Trigger>
-		<div class="p-1">
-			<EllipsisVerticalIcon />
-		</div>
+		<EllipsisVerticalIcon class="inline-block size-4" />
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content>
 		<DropdownMenu.Group>
