@@ -12,6 +12,7 @@
 	} = $props();
 </script>
 
+<!-- TODO: extract this -->
 <Popover.Root>
 	<Popover.Trigger>
 		<div class="flex place-items-center gap-2 rounded px-3 py-2 hover:bg-primary/10">

@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import type * as schema from "$lib/server/db/schema";
-import type { deletePeriod, getPeriod, getPeriods } from "./server/db/periods";
+import type {
+	deletePeriod,
+	getMonthlyStudentPeriods,
+	getPeriod,
+	getPeriods,
+} from "./server/db/periods";
+import type { getAbsentPeriods } from "./server/db/students";
 
 export namespace Payload {
 	export interface ToggleRepresentative {
@@ -48,6 +54,9 @@ export namespace Data {
 			studentId: number;
 		}[];
 	}
+
+	export type MonthlyStudentPeriods = AwaitReturn<typeof getMonthlyStudentPeriods>;
+	export type SubjectAbsentPeriods = AwaitReturn<typeof getAbsentPeriods>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

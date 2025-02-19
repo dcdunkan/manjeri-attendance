@@ -1,6 +1,12 @@
 import type { BaseDate } from "$lib/types";
 
 const formatter = new Intl.DateTimeFormat("en-US", { weekday: "short" });
+export const longDateFormatter = new Intl.DateTimeFormat("en-US", {
+	weekday: "long",
+	day: "2-digit",
+	month: "long",
+	year: "numeric",
+});
 
 export function safeDivision(numerator: number, denominator: number) {
 	return denominator == 0 ? 0 : numerator / denominator;

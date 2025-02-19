@@ -19,6 +19,8 @@ export const routes = {
 	adminApis: "/api/admin/",
 	// api: representative
 	representativeApis: "/api/representative/",
+	// api: students
+	studentApis: "/api/student/",
 };
 
 export const STARTING_YEAR = 2025;

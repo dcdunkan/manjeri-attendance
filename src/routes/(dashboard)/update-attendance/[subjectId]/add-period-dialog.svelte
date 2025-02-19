@@ -18,6 +18,7 @@
 	import { toast } from "svelte-sonner";
 	import type { Data, Payload, Result } from "$lib/types";
 	import SearchInput from "./search-input.svelte";
+	import { longDateFormatter } from "$lib/helpers";
 
 	let {
 		students,
@@ -70,13 +71,6 @@
 	function comparatorFn(a: EnrolledStudent, b: EnrolledStudent): number {
 		return a.rollNumber - b.rollNumber;
 	}
-
-	const dateFormatter = new Intl.DateTimeFormat("en-US", {
-		weekday: "long",
-		day: "2-digit",
-		month: "long",
-		year: "numeric",
-	});
 </script>
 
 <Dialog.Root bind:open>
@@ -120,7 +114,7 @@
 		showCloseButton={false}
 	>
 		<Dialog.Header>
-			<Dialog.Title>{dateFormatter.format(value.toDate(getLocalTimeZone()))}</Dialog.Title>
+			<Dialog.Title>{longDateFormatter.format(value.toDate(getLocalTimeZone()))}</Dialog.Title>
 			<Dialog.Description>{subject.name}</Dialog.Description>
 		</Dialog.Header>
 

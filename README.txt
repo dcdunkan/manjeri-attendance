@@ -33,11 +33,12 @@ they currently do not have a digital attendance system.
     [ ] Subject name editor dialog
     [x] Make it reactive
     [ ] Delist the student
-[ ] Viewing attendance
+[x] Viewing attendance
     [x] Calculate attendance
     [x] Show total in dashboard
-    [ ] Calendar wise view
-    [ ] Subject wise view
+    [x] Calendar wise view
+    [x] Subject wise view
+    [ ] Show total in attendance view sections
 [ ] Account settings
     [ ] Set display name
     [ ] Modify password

@@ -1,6 +1,6 @@
 import { db } from "$lib/server/db";
 import * as schema from "$lib/server/db/schema";
-import { and, eq, between, sql } from "drizzle-orm";
+import { and, eq, between, sql, inArray, asc } from "drizzle-orm";
 
 export async function getPeriod(subjectId: number, periodId: number) {
 	return await db.query.periods.findFirst({
@@ -50,4 +50,31 @@ export async function deletePeriod(subjectId: number, periodId: number) {
 		.where(and(eq(schema.periods.subjectId, subjectId), eq(schema.periods.id, periodId)));
 
 	return { deletedAbsentees: absentees };
+}
+
+export async function getMonthlyStudentPeriods(
+	studentId: number,
+	startDate: Date,
+	endDate: Date,
+	subjectIds: number[],
+) {
+	return await db.query.periods.findMany({
+		where: () =>
+			and(
+				between(schema.periods.date, startDate, endDate),
+				inArray(schema.periods.subjectId, subjectIds),
+			),
+		with: {
+			absentees: {
+				where: () => eq(schema.absentees.studentId, studentId),
+				limit: 1,
+				columns: {
+					periodId: false,
+					subjectId: false,
+					studentId: false,
+				},
+			},
+		},
+		orderBy: [asc(schema.periods.date)],
+	});
 }

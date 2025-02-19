@@ -10,7 +10,7 @@
 	import SearchInput from "./search-input.svelte";
 	import { Checkbox } from "$lib/components/ui/checkbox";
 	import { Label } from "$lib/components/ui/label";
-	import { extractBaseDate } from "$lib/helpers";
+	import { extractBaseDate, longDateFormatter } from "$lib/helpers";
 	import LoadingCard from "$lib/components/loading-card.svelte";
 	import LoadingFailedCard from "$lib/components/loading-failed-card.svelte";
 
@@ -69,12 +69,6 @@
 	function comparatorFn(a: EnrolledStudent, b: EnrolledStudent): number {
 		return a.rollNumber - b.rollNumber;
 	}
-	const dateFormatter = new Intl.DateTimeFormat("en-US", {
-		weekday: "long",
-		day: "2-digit",
-		month: "long",
-		year: "numeric",
-	});
 	function areEqualSets(a: Set<number>, b: Set<number>) {
 		return a.size === b.size && a.symmetricDifference(b).size === 0;
 	}
@@ -143,7 +137,7 @@
 		showCloseButton={false}
 	>
 		<Dialog.Header>
-			<Dialog.Title>{dateFormatter.format(selectedDate)}</Dialog.Title>
+			<Dialog.Title>{longDateFormatter.format(selectedDate)}</Dialog.Title>
 			<Dialog.Description>{subject.name}</Dialog.Description>
 		</Dialog.Header>
 

@@ -49,6 +49,11 @@ export const handle: Handle = async ({ event, resolve }) => {
 		} else return error(403, "Forbidden");
 	}
 
+	if (route.startsWith(routes.studentApis)) {
+		if (event.locals.account.role === "student") return resolve(event);
+		return error(403, "Forbidden");
+	}
+
 	// The role must meet the route.
 	// If it starts with the administrator route's root:
 	if (route.startsWith(routes.administrator)) {
