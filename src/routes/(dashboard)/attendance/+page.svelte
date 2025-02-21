@@ -6,11 +6,12 @@
 		CalendarDaysIcon,
 		CheckCircleIcon,
 		ListIcon,
+		LoaderCircleIcon,
 	} from "lucide-svelte";
 	import type { PageData } from "./$types";
 	import clsx from "clsx";
 	import { SvelteDate, SvelteMap } from "svelte/reactivity";
-	import { extractBaseDate, pluralize, safeDivision } from "$lib/helpers";
+	import { cutePercent, extractBaseDate, pluralize, safeDivision } from "$lib/helpers";
 	import { MONTHS } from "$lib/constants";
 	import { CalendarDate, GregorianCalendar, getDayOfWeek } from "@internationalized/date";
 	import Button from "$lib/components/ui/button/button.svelte";
@@ -22,6 +23,7 @@
 	import type { getEnrolledSubjects } from "$lib/server/db/enrollments";
 	import LoadingCard from "$lib/components/loading-card.svelte";
 	import LoadingFailedCard from "$lib/components/loading-failed-card.svelte";
+	import { slide } from "svelte/transition";
 
 	let { data }: { data: PageData } = $props();
 
@@ -29,7 +31,9 @@
 		calendar: { title: "Date-wise Attendance", icon: CalendarDaysIcon },
 		subject: { title: "Subject-wise Attendance", icon: ListIcon },
 	};
-	let currentView = $state<keyof typeof views>("subject");
+	let currentView = $state<keyof typeof views>();
+	let FALLBACK_VIEW: keyof typeof views = "calendar";
+	const LOCAL_STORAGE_KEY_VIEW = "attendance-view-pref";
 
 	const calendar = new GregorianCalendar();
 	const selectedDate = new SvelteDate();
@@ -55,7 +59,19 @@
 		state: "pending",
 		message: "Loading subjects...",
 	});
+
+	function isView(view: string | null): view is keyof typeof views {
+		return view != null && Object.keys(views).includes(view);
+	}
+
 	onMount(async () => {
+		const savedViewPreference = localStorage.getItem(LOCAL_STORAGE_KEY_VIEW);
+		if (!isView(savedViewPreference)) {
+			localStorage.setItem(LOCAL_STORAGE_KEY_VIEW, FALLBACK_VIEW);
+		} else {
+			currentView = savedViewPreference;
+		}
+
 		try {
 			const result = await data.subjects;
 			enrolledSubjects = {
@@ -241,12 +257,23 @@
 <NavigationHeader title="Attendance" />
 
 <div class="flex place-items-center justify-between">
-	<h1 class="text-2xl">{views[currentView].title}</h1>
+	<h1 class="text-2xl">
+		{#if currentView == null}
+			Loading...
+		{:else}
+			{views[currentView].title}
+		{/if}
+	</h1>
 
 	<div class="flex w-fit rounded border">
 		{#each Object.entries(views) as [viewId, details]}
 			<button
-				onclick={() => (currentView = viewId as keyof typeof views)}
+				onclick={() => {
+					if (isView(viewId)) {
+						currentView = viewId;
+						localStorage.setItem(LOCAL_STORAGE_KEY_VIEW, viewId);
+					}
+				}}
 				class={clsx(
 					"bg-background p-2 text-primary first:rounded-l last:rounded-r",
 					viewId === currentView && "bg-primary",
@@ -351,11 +378,11 @@
 							<Table.Body>
 								{#each absentPeriods.data.slice() as absentPeriod, i}
 									<Table.Row>
-										<Table.Cell class="w-min">{i + 1}</Table.Cell>
+										<Table.Cell class="text-center">{i + 1}</Table.Cell>
 										<Table.Cell>{formatter.format(absentPeriod.date)}</Table.Cell>
-										<Table.Cell class="text-center"
-											>{weekdayFormatter.format(absentPeriod.date)}</Table.Cell
-										>
+										<Table.Cell class="text-center">
+											{weekdayFormatter.format(absentPeriod.date)}
+										</Table.Cell>
 									</Table.Row>
 								{/each}
 							</Table.Body>
@@ -410,186 +437,278 @@
 {/if}
 
 {#if currentView === "calendar"}
-	<p>
-		The date-wise attendance can be seen below. Click on a date to see the recorded periods and
-		subjects that you were present or absent on.
-	</p>
+	{@const total =
+		monthlyData.state === "resolved"
+			? Object.values(monthlyData.data).reduce(
+					(p, c) => {
+						return {
+							periodCount: p.periodCount + c.length,
+							absentCount: p.absentCount + c.reduce((x, y) => x + (y.absent ? 1 : 0), 0),
+						};
+					},
+					{ periodCount: 0, absentCount: 0 },
+				)
+			: { periodCount: null, absentCount: null }}
+	<div class="space-y-6" transition:slide>
+		<div class="grid grid-cols-3 gap-4 rounded border p-4">
+			<div class="flex flex-col items-center justify-center">
+				<div class="text-sm">{pluralize(total.periodCount || 0, "period", "periods")}</div>
+				<div class="text-xl">
+					{#if total.periodCount == null}
+						<LoaderCircleIcon class="size-7 animate-spin" />
+					{:else}
+						{total.periodCount}
+					{/if}
+				</div>
+			</div>
 
-	<div class="space-y-6 rounded border">
-		<div class="w-full border-b">
-			<div class="flex place-items-center justify-between gap-2 p-2">
-				<Button variant="ghost" onclick={() => selectedDate.setMonth(selected.month - 1)}>
-					<ArrowLeftIcon class="size-3" />
-				</Button>
+			<div class="flex flex-col items-center justify-center">
+				<div class="text-sm">{selected.year}</div>
+				<div class="text-xl">{monthOptions[selected.month].label}</div>
+			</div>
 
-				<div class="text-sm">{monthOptions[selected.month].label} {selected.year}</div>
+			<div class="flex flex-col items-center justify-center">
+				<div class="text-sm">{pluralize(total.absentCount || 0, "absent", "absents")}</div>
 
-				<Button variant="ghost" onclick={() => selectedDate.setMonth(selected.month + 1)}>
-					<ArrowRightIcon class="size-3" />
-				</Button>
+				<div class="text-xl">
+					{#if total.absentCount == null}
+						<LoaderCircleIcon class="size-7 animate-spin" />
+					{:else}
+						{total.absentCount}
+					{/if}
+				</div>
+			</div>
+		</div>
+
+		<p>Click on a day to see the recorded periods you missed.</p>
+
+		<div class="space-y-6 rounded border">
+			<div class="w-full border-b">
+				<div class="flex place-items-center justify-between gap-2 p-2">
+					<Button variant="ghost" onclick={() => selectedDate.setMonth(selected.month - 1)}>
+						<ArrowLeftIcon class="size-3" />
+					</Button>
+
+					<div class="text-sm">{monthOptions[selected.month].label} {selected.year}</div>
+
+					<Button variant="ghost" onclick={() => selectedDate.setMonth(selected.month + 1)}>
+						<ArrowRightIcon class="size-3" />
+					</Button>
+				</div>
+			</div>
+
+			<div
+				id="calendar"
+				class="grid grid-cols-7 gap-1 *:flex *:flex-col *:items-center *:justify-center"
+			>
+				{#each { length: 7 }, i}
+					<div class="text-[0.65rem]">{weekdays[i]}</div>
+				{/each}
+
+				{#each { length: startOffset.weekDay % 7 }, i}
+					<div
+						class={clsx("p-3 text-sm", i === 0 ? "text-yellow-500/60" : "text-muted-foreground")}
+					>
+						<div>{startOffset.day - startOffset.weekDay + i + 1}</div>
+						<div class="mt-1 grid grid-cols-3 gap-1">
+							{#each { length: 6 }}
+								<div class="size-1 rounded-full"></div>
+							{/each}
+						</div>
+					</div>
+				{/each}
+
+				{#each { length: numberOfDays }, i}
+					{@const day = i + 1}
+					{@const periods = monthlyData.state === "resolved" ? (monthlyData.data[day] ?? []) : []}
+					<button
+						class="rounded border border-transparent p-2 text-sm transition-all duration-100 hover:border-primary"
+						onclick={() => {
+							if (showDayDialog) return;
+							showDayDialog = true;
+							selectedDate.setDate(day);
+						}}
+					>
+						<div class={clsx((startOffset.weekDay + i) % 7 === 0 ? "text-yellow-500" : "")}>
+							{day}
+						</div>
+						<div class="mt-1 grid grid-cols-3 gap-1">
+							{#each periods as period}
+								<div
+									class={clsx("size-1 rounded-full", {
+										"bg-green-400": !period.absent,
+										"bg-red-400": period.absent,
+									})}
+								></div>
+							{/each}
+							{#each { length: 6 - periods.length }}
+								<div class="size-1 rounded-full"></div>
+							{/each}
+						</div>
+					</button>
+				{/each}
+
+				{#each { length: restOfTheDays === 7 ? 0 : restOfTheDays }, i}
+					<div class="p-3 text-sm text-muted-foreground">
+						<div>{i + 1}</div>
+
+						<div class="mt-1 grid grid-cols-3 gap-1">
+							{#each { length: 6 }}<div class="size-1 rounded-full"></div>{/each}
+						</div>
+					</div>
+				{/each}
 			</div>
 		</div>
 
 		<div
-			id="calendar"
-			class="grid grid-cols-7 gap-1 *:flex *:flex-col *:items-center *:justify-center"
+			class="flex place-items-center items-center justify-center gap-x-4 gap-y-2 text-sm sm:flex-row"
 		>
-			{#each { length: 7 }, i}
-				<div class="text-[0.65rem]">
-					{weekdays[i]}
-				</div>
-			{/each}
-
-			{#each { length: startOffset.weekDay }, i}
-				<div class="p-3 text-sm text-muted-foreground">
-					<div>{startOffset.day - startOffset.weekDay + i + 1}</div>
-
-					<div class="mt-1 grid grid-cols-3 gap-1">
-						{#each { length: 6 }}<div class="size-1 rounded-full"></div>{/each}
-					</div>
-				</div>
-			{/each}
-
-			{#each { length: numberOfDays }, i}
-				{@const day = i + 1}
-				{@const periods = monthlyData.state === "resolved" ? (monthlyData.data[day] ?? []) : []}
-				<button
-					class="rounded border border-transparent p-2 text-sm transition-all duration-100 hover:border-primary"
-					onclick={() => {
-						if (showDayDialog) return;
-						showDayDialog = true;
-						selectedDate.setDate(day);
-					}}
-				>
-					<div>{day}</div>
-					<div class="mt-1 grid grid-cols-3 gap-1">
-						{#each periods as period}
-							<div
-								class={clsx("size-1 rounded-full", {
-									"bg-green-400": !period.absent,
-									"bg-red-400": period.absent,
-								})}
-							></div>
-						{/each}
-						{#each { length: 6 - periods.length }}
-							<div class="size-1 rounded-full"></div>
-						{/each}
-					</div>
-				</button>
-			{/each}
-
-			{#each { length: restOfTheDays === 7 ? 0 : restOfTheDays }, i}
-				<div class="p-3 text-sm text-muted-foreground">
-					<div>{i + 1}</div>
-
-					<div class="mt-1 grid grid-cols-3 gap-1">
-						{#each { length: 6 }}<div class="size-1 rounded-full"></div>{/each}
-					</div>
-				</div>
-			{/each}
+			<div class="flex place-items-center gap-2">
+				<div class="aspect-square size-2 rounded-full bg-green-600"></div>
+				<div>Present periods</div>
+			</div>
+			<div class="flex place-items-center gap-2">
+				<div class="aspect-square size-2 rounded-full bg-red-600"></div>
+				<div>Absent periods</div>
+			</div>
+			<div class="flex place-items-center gap-2">
+				<div class="aspect-square h-2 w-4 rounded bg-yellow-500"></div>
+				<div>Holiday</div>
+			</div>
 		</div>
+
+		<p class="text-center text-sm text-muted-foreground">
+			Tip:
+			<button
+				onclick={() => (currentView = "subject")}
+				class="underline decoration-primary/50 decoration-dotted underline-offset-2"
+			>
+				Switch to subject-wise view
+			</button>
+			by clicking on <ListIcon class="inline-block size-4" />.
+		</p>
 	</div>
-
-	<div
-		class="flex place-items-center items-center justify-center gap-x-4 gap-y-2 text-sm sm:flex-row"
-	>
-		<div class="flex place-items-center gap-2">
-			<div class="aspect-square size-2 rounded-full bg-green-600"></div>
-			<div>Present periods</div>
-		</div>
-		<div class="flex place-items-center gap-2">
-			<div class="aspect-square size-2 rounded-full bg-red-600"></div>
-			<div>Absent periods</div>
-		</div>
-		<div class="flex place-items-center gap-2">
-			<div class="aspect-square h-2 w-4 rounded bg-yellow-500"></div>
-			<div>Holiday</div>
-		</div>
-	</div>
-
-	<p class="text-center text-sm text-muted-foreground">
-		Tip:
-		<button
-			onclick={() => (currentView = "subject")}
-			class="underline decoration-primary/50 decoration-dotted underline-offset-2"
-		>
-			Switch to subject-wise view
-		</button>
-		by clicking on <ListIcon class="inline-block size-4" />.
-	</p>
 {:else if currentView === "subject"}
-	<p>The subject-wise attendance can be seen below.</p>
+	<div class="space-y-6" transition:slide>
+		{#if enrolledSubjects.state === "pending"}
+			<LoadingCard>
+				<div>{enrolledSubjects.message}</div>
+			</LoadingCard>
+		{:else if enrolledSubjects.state === "resolved"}
+			{@const subjects = Object.values(enrolledSubjects.data)}
+			{#if subjects.length > 0}
+				{@const total = subjects.reduce(
+					(p, c) => ({
+						absentCount: p.absentCount + c.absentCount,
+						periodCount: p.periodCount + c.periodCount,
+					}),
+					{ absentCount: 0, periodCount: 0 },
+				)}
 
-	{#if enrolledSubjects.state === "pending"}
-		<LoadingCard>
-			<div>{enrolledSubjects.message}</div>
-		</LoadingCard>
-	{:else if enrolledSubjects.state === "resolved"}
-		{@const subjects = Object.values(enrolledSubjects.data)}
-		{#if subjects.length > 0}
-			<Table.Root class="text-sm">
-				<Table.Header>
-					<Table.Row>
-						<Table.Head>Subject</Table.Head>
-						<Table.Head class="text-center">Periods</Table.Head>
-						<Table.Head class="text-right">Percentage</Table.Head>
-					</Table.Row>
-				</Table.Header>
-				<Table.Body>
-					{#each subjects as subject}
-						{@const attended = subject.periodCount - subject.absentCount}
-						{@const percent = Math.round(safeDivision(attended, subject.periodCount) * 100)}
-						<Table.Row
-							onclick={() => {
-								subjectDialog = {
-									show: true,
-									subjectId: subject.id,
-									currentPage: subject.absentCount === 0 ? 0 : 1,
-									totalPages: Math.ceil(subject.absentCount / MAX_ABSENTS_PER_PAGE),
-								};
-							}}
-						>
-							<Table.Cell>{subject.name}</Table.Cell>
-							<Table.Cell class="text-center">{attended} / {subject.periodCount}</Table.Cell>
-							<Table.Cell class="text-right font-bold">
-								<div data-percent={percent} style="--percent: {percent}">
-									{percent} %
-								</div>
-							</Table.Cell>
+				<div class="grid grid-cols-3 gap-4 rounded border p-4">
+					<div class="flex flex-col items-center justify-center">
+						<div class="text-sm">{pluralize(total.periodCount, "period", "periods")}</div>
+						<div class="text-xl">
+							{#if total.periodCount == null}
+								<LoaderCircleIcon class="size-7 animate-spin" />
+							{:else}
+								{total.periodCount}
+							{/if}
+						</div>
+					</div>
+
+					<div class="flex flex-col items-center justify-center">
+						<div class="text-sm">total</div>
+						<div class="text-xl">
+							{cutePercent(
+								safeDivision(total.periodCount - total.absentCount, total.periodCount) * 100,
+							)} %
+						</div>
+					</div>
+
+					<div class="flex flex-col items-center justify-center">
+						<div class="text-sm">{pluralize(total.absentCount, "absent", "absents")}</div>
+						<div class="text-xl">
+							{#if total.absentCount == null}
+								<LoaderCircleIcon class="size-7 animate-spin" />
+							{:else}
+								{total.absentCount}
+							{/if}
+						</div>
+					</div>
+				</div>
+
+				<p>
+					Subjects you have enrolled in are listed below. The missed periods for a subject can be
+					reviewed by clicking on the subject entry.
+				</p>
+
+				<Table.Root class="text-sm">
+					<Table.Header>
+						<Table.Row>
+							<Table.Head>#</Table.Head>
+							<Table.Head>Subject</Table.Head>
+							<Table.Head class="text-center">Periods</Table.Head>
+							<Table.Head class="text-right">Percentage</Table.Head>
 						</Table.Row>
-					{/each}
-				</Table.Body>
-			</Table.Root>
-		{:else}
-			<div>A</div>
-		{/if}
-	{:else if enrolledSubjects.state === "failed"}
-		<LoadingFailedCard>
-			<div>{enrolledSubjects.message}</div>
-		</LoadingFailedCard>
-	{:else}
-		<div>Unknown option.</div>
-	{/if}
+					</Table.Header>
 
-	<p class="text-center text-sm text-muted-foreground">
-		Tip:
-		<button
-			onclick={() => (currentView = "calendar")}
-			class="underline decoration-primary/50 decoration-dotted underline-offset-2"
-		>
-			Switch to date-wise view
-		</button>
-		by clicking on <CalendarDaysIcon class="inline-block size-4" />.
-	</p>
-{:else}
+					<Table.Body>
+						{#each subjects as subject, i}
+							{@const attended = subject.periodCount - subject.absentCount}
+							{@const percent = cutePercent(safeDivision(attended, subject.periodCount) * 100)}
+
+							<Table.Row
+								onclick={() => {
+									subjectDialog = {
+										show: true,
+										subjectId: subject.id,
+										currentPage: subject.absentCount === 0 ? 0 : 1,
+										totalPages: Math.ceil(subject.absentCount / MAX_ABSENTS_PER_PAGE),
+									};
+								}}
+							>
+								<Table.Cell>{i + 1}</Table.Cell>
+								<Table.Cell>{subject.name}</Table.Cell>
+								<Table.Cell class="text-center">{attended} / {subject.periodCount}</Table.Cell>
+								<Table.Cell class="text-right font-bold">
+									<div data-percent={percent} style="--percent: {percent}">
+										{percent} %
+									</div>
+								</Table.Cell>
+							</Table.Row>
+						{/each}
+					</Table.Body>
+				</Table.Root>
+			{:else}
+				<div class="flex w-full items-center justify-center rounded border border-dashed p-4">
+					You have not enrolled in any subjects.
+				</div>
+			{/if}
+		{:else if enrolledSubjects.state === "failed"}
+			<LoadingFailedCard>
+				<div>{enrolledSubjects.message}</div>
+			</LoadingFailedCard>
+		{:else}
+			<div>Unknown option.</div>
+		{/if}
+
+		<p class="text-center text-sm text-muted-foreground">
+			Tip:
+			<button
+				onclick={() => (currentView = "calendar")}
+				class="underline decoration-primary/50 decoration-dotted underline-offset-2"
+			>
+				Switch to date-wise view
+			</button>
+			by clicking on <CalendarDaysIcon class="inline-block size-4" />.
+		</p>
+	</div>
+{:else if currentView == null}{:else}
 	<div>Unknown view.</div>
 {/if}
 
 <style>
-	#calendar > :nth-child(7n - 6) {
-		@apply text-yellow-500;
-	}
-
 	[data-percent] {
 		color: hsl(var(--percent) 100% 40%) !important;
 	}
