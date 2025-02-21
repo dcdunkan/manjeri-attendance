@@ -11,20 +11,27 @@
 
 	let {
 		subject,
-		enrollment,
-		representatives,
+		enrollments = $bindable(),
+		enrollmentId,
+		representatives = $bindable(),
 	}: {
-		enrollment: Awaited<ReturnType<typeof getEnrolledStudents>>[number];
+		enrollments: Awaited<ReturnType<typeof getEnrolledStudents>>;
+		enrollmentId: number;
 		subject: Awaited<ReturnType<typeof getSubject>>;
 		representatives: (Representative & { student: { fullName: string } })[];
 	} = $props();
 
+	let enrollment = $derived(enrollments.find((enrollment) => enrollment.id === enrollmentId)!);
 	let represents = $derived(representatives.some((rep) => rep.studentId === enrollment.student.id));
-	let dialogOpen = $state(false);
-	let isLoading = $state(false);
+
+	let promoteDialogOpen = $state(false);
+	let isPromoteLoading = $state(false);
+
+	let delistDialogOpen = $state(false);
+	let isDelistLoading = $state(false);
 
 	async function togglePromote() {
-		isLoading = true;
+		isPromoteLoading = true;
 
 		const response = await fetch("/api/admin/subjects/toggle-representative", {
 			method: "POST",
@@ -37,7 +44,7 @@
 			headers: { "Content-Type": "application/json" },
 		});
 
-		dialogOpen = false;
+		promoteDialogOpen = false;
 
 		// TODO: What about response.ok?
 		const result: Result<Data.ToggleRepresentative> = await response.json();
@@ -59,51 +66,135 @@
 			);
 		}
 
-		isLoading = false;
+		isPromoteLoading = false;
+	}
+
+	async function delistEnrollment() {
+		isDelistLoading = true;
+		const response = await fetch("/api/admin/subjects/delist-enrollment", {
+			method: "POST",
+			body: JSON.stringify({
+				batchId: subject.batch.id,
+				subjectId: subject.id,
+				enrollmentId: enrollment.id,
+				studentId: enrollment.student.id,
+			} satisfies Payload.DelistEnrollment),
+			headers: { "Content-Type": "application/json" },
+		});
+
+		if (!response.ok && response.status !== 400) {
+			isDelistLoading = false;
+			toast.error("Failed to delist student.");
+			return;
+		}
+		const result: Result<Data.DelistEnrollment> = await response.json();
+		if (!result.ok) {
+			isDelistLoading = false;
+			toast.error("Failed to delist student.");
+			return;
+		}
+
+		if (represents) {
+			const repIndex = representatives.findIndex((rep) => rep.studentId === enrollment.student.id);
+			if (repIndex !== -1) representatives.splice(repIndex, 1);
+		}
+		const enrollmentIndex = enrollments.findIndex(({ id }) => enrollment.id === id);
+		if (enrollmentIndex !== -1) enrollments.splice(enrollmentIndex, 1);
+
+		delistDialogOpen = false;
+		isDelistLoading = false;
+
+		toast.success(`Delisted student and deleted ${result.data.absentCount} absent data`);
 	}
 </script>
 
-<Dialog.Root bind:open={dialogOpen}>
+<Dialog.Root bind:open={promoteDialogOpen}>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title class="mb-2">
+			<Dialog.Title>
 				Do you really want to {represents ? "demote" : "promote"}
 				{enrollment.student.fullName}?
 			</Dialog.Title>
-			<Dialog.Description class="space-y-2">
-				{#if represents}
-					<p>
-						This will remove the ability of {enrollment.student.fullName} for modifying and managing
-						the attendance of the batchmates.
-					</p>
-
-					{#if representatives.length > 1}
-						<p>The following students will be left for representing the students:</p>
-						<ul class="ml-4 list-inside list-disc">
-							{#each representatives.filter((rep) => rep.studentId !== enrollment.student.id) as rep}
-								<li class="list-item">{rep.student.fullName}</li>
-							{/each}
-						</ul>
-					{:else}
-						<p class="font-semibold text-warning-foreground">
-							Warning: There won't be any representatives left for the subject {subject.name}.
-						</p>
-					{/if}
-				{:else}
-					This will give <span class="font-bold">{enrollment.student.fullName}</span>
-					full access to marking and modifying the attendance of students enrolled to the course
-					<span class="font-bold">{subject.name}</span>,
-					<span class="underline underline-offset-4">including their own attendance</span>.
-				{/if}
-			</Dialog.Description>
+			<Dialog.Description>This action has irreversible consequences.</Dialog.Description>
 		</Dialog.Header>
 
+		{#if represents}
+			<p>
+				This will remove the ability of {enrollment.student.fullName} for modifying and managing the
+				attendance of the batchmates.
+			</p>
+
+			{#if representatives.length > 1}
+				<p>The following students will be left for representing the students:</p>
+				<ul class="ml-4 list-inside list-disc">
+					{#each representatives.filter((rep) => rep.studentId !== enrollment.student.id) as rep}
+						<li class="list-item">{rep.student.fullName}</li>
+					{/each}
+				</ul>
+			{:else}
+				<p class="font-semibold text-warning-foreground">
+					Warning: There won't be any representatives left for the subject {subject.name}.
+				</p>
+			{/if}
+		{:else}
+			<p>
+				This will give <span class="font-bold">{enrollment.student.fullName}</span>
+				full access to marking and modifying the attendance of students enrolled to the course
+				<span class="font-bold">{subject.name}</span>,
+				<span class="underline underline-offset-4">including their own attendance</span>.
+			</p>
+		{/if}
+
 		<Dialog.Footer>
-			<Button disabled={isLoading} onclick={togglePromote}>
-				{#if isLoading}
+			<Button disabled={isPromoteLoading} onclick={togglePromote}>
+				{#if isPromoteLoading}
 					<LoaderCircleIcon class="size-3 animate-spin" />
 				{:else}
 					{represents ? "Demote" : "Promote"}
+				{/if}
+			</Button>
+		</Dialog.Footer>
+	</Dialog.Content>
+</Dialog.Root>
+
+<Dialog.Root bind:open={delistDialogOpen}>
+	<Dialog.Content>
+		<Dialog.Header>
+			<Dialog.Title>
+				Do you really want to delist {enrollment.student.fullName}?
+			</Dialog.Title>
+			<Dialog.Description>This action has irreversible consequences.</Dialog.Description>
+		</Dialog.Header>
+
+		<p>
+			By doing so you will remove the enrollment of
+			<span class="font-medium">{enrollment.student.fullName}</span>
+			from the subject,
+			<span class="font-medium">{subject.name}</span>.
+			<span class="underline decoration-dotted underline-offset-4">
+				This will also delete all the period absentee data of the said student.
+			</span>
+		</p>
+
+		{#if represents}
+			<p>
+				<span class="font-bold">As the student was a representative</span>, they can't no longer
+				manage the attendance of the other students.
+			</p>
+
+			{#if representatives.length === 1}
+				<p class="font-semibold text-warning-foreground">
+					Warning: There won't be any representatives left for the subject {subject.name}.
+				</p>
+			{/if}
+		{/if}
+
+		<Dialog.Footer>
+			<Button disabled={isDelistLoading} onclick={delistEnrollment}>
+				{#if isDelistLoading}
+					<LoaderCircleIcon class="size-3 animate-spin" />
+				{:else}
+					Yes, delist {enrollment.student.fullName}
 				{/if}
 			</Button>
 		</Dialog.Footer>
@@ -118,9 +209,11 @@
 		<DropdownMenu.Group>
 			<DropdownMenu.GroupHeading>Actions</DropdownMenu.GroupHeading>
 			<DropdownMenu.Separator />
-			<DropdownMenu.Item>Profile</DropdownMenu.Item>
-			<DropdownMenu.Item>Delist</DropdownMenu.Item>
-			<DropdownMenu.Item onclick={() => (dialogOpen = true)}>
+			<a href="../students/{enrollment.student.id}">
+				<DropdownMenu.Item class="cursor-pointer">Profile</DropdownMenu.Item>
+			</a>
+			<DropdownMenu.Item onclick={() => (delistDialogOpen = true)}>Delist</DropdownMenu.Item>
+			<DropdownMenu.Item onclick={() => (promoteDialogOpen = true)}>
 				{#if represents}
 					Demote
 				{:else}

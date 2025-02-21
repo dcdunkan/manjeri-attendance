@@ -16,6 +16,19 @@ export namespace Payload {
 		action: "promote" | "demote";
 	}
 
+	export interface UpdateSubjectName {
+		subjectId: number;
+		batchId: number;
+		name: string;
+	}
+
+	export interface DelistEnrollment {
+		subjectId: number;
+		batchId: number;
+		enrollmentId: number;
+		studentId: number;
+	}
+
 	export namespace MarkAttendance {
 		export interface POST {
 			subjectId: number;
@@ -53,6 +66,10 @@ export namespace Data {
 			id: number;
 			studentId: number;
 		}[];
+	}
+
+	export interface DelistEnrollment {
+		absentCount: number;
 	}
 
 	export type MonthlyStudentPeriods = AwaitReturn<typeof getMonthlyStudentPeriods>;

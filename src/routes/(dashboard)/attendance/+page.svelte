@@ -34,6 +34,9 @@
 	let currentView = $state<keyof typeof views>();
 	let FALLBACK_VIEW: keyof typeof views = "calendar";
 	const LOCAL_STORAGE_KEY_VIEW = "attendance-view-pref";
+	function isView(view: string | null): view is keyof typeof views {
+		return view != null && Object.keys(views).includes(view);
+	}
 
 	const calendar = new GregorianCalendar();
 	const selectedDate = new SvelteDate();
@@ -59,10 +62,6 @@
 		state: "pending",
 		message: "Loading subjects...",
 	});
-
-	function isView(view: string | null): view is keyof typeof views {
-		return view != null && Object.keys(views).includes(view);
-	}
 
 	onMount(async () => {
 		const savedViewPreference = localStorage.getItem(LOCAL_STORAGE_KEY_VIEW);

@@ -54,7 +54,8 @@
 					{cutePercent(safeDivision(attended, classes) * 100)} % ({attended} / {classes})
 				</Table.Cell>
 				<Table.Cell class="text-center">
-					<PromoteDialog {subject} {enrollment} {representatives} />
+					<!-- TODO: make this drop down a dialog upon clicking the row -->
+					<PromoteDialog {subject} {enrollments} enrollmentId={enrollment.id} {representatives} />
 				</Table.Cell>
 			</Table.Row>
 		{/each}

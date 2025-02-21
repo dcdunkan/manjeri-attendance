@@ -30,15 +30,16 @@ they currently do not have a digital attendance system.
     [x] Edit period & attendance
     [x] Delete period
 [ ] Subject / enrollment list
-    [ ] Subject name editor dialog
+    [x] Subject name editor dialog
     [x] Make it reactive
-    [ ] Delist the student
+    [x] Delist the student
+    [ ] Overall attendance statistics
 [x] Viewing attendance
     [x] Calculate attendance
     [x] Show total in dashboard
     [x] Calendar wise view
     [x] Subject wise view
-    [ ] Show total in attendance view sections
+    [x] Show total in attendance view sections
 [ ] Account settings
     [ ] Set display name
     [ ] Modify password
@@ -54,3 +55,5 @@ they currently do not have a digital attendance system.
 [ ] use global stores for global data
 [ ] switch to data tables instead of normal tables
 [ ] extra verifications for auth in server routes
+[ ] verify if the attendance is marked/edited/deleted within the allowed time period (last 7 days)
+[ ] drizzle transactions / batch operations

@@ -68,12 +68,9 @@
 				<h2 class="font-serif text-2xl font-medium italic">Subjects</h2>
 
 				<p>
-					Subjects assigned to the batch are listed below. Click to see the list of students
-					enrolled to each subjects, representatives and overall attendance statistics for the
-					subject.
+					Subjects linked with the subjects are listed below. Select a subject to see students
+					enrolled, representatives and attendance statistics.
 				</p>
-
-				<!-- TODO: make these subjects link to their enrollment pages -->
 
 				<div class="space-y-2">
 					{#each batch.subjects as subject, i}
