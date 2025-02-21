@@ -2,6 +2,7 @@
 	import { Button } from "$lib/components/ui/button";
 	import * as Dialog from "$lib/components/ui/dialog";
 	import { Input } from "$lib/components/ui/input";
+	import { Label } from "$lib/components/ui/label";
 	import type { getSubject } from "$lib/server/db/subjects";
 	import type { Result, Payload } from "$lib/types";
 	import { LoaderCircleIcon } from "lucide-svelte";
@@ -25,17 +26,22 @@
 			invalid_type_error: "Invalid name input",
 			required_error: "A name is required",
 		})
+		.trim()
 		.min(3, "Name is too short")
-		.max(128, "Name is too long");
+		.max(128, "Name is too long")
+		.refine((str) => str !== subject.name, {
+			message: "New subject name can't be the same!",
+		});
 
-	let message = $derived.by(() => {
-		const data = validName.safeParse(subjectNameInput);
-		return data.success
+	let parsedInput = $derived.by(() => validName.safeParse(subjectNameInput));
+
+	let message = $derived(
+		parsedInput.success
 			? undefined
-			: data.error.isEmpty
+			: parsedInput.error.isEmpty
 				? "Invalid input"
-				: data.error.issues[0].message;
-	});
+				: parsedInput.error.issues[0].message,
+	);
 
 	async function updateName() {
 		isUpdating = true;
@@ -74,12 +80,14 @@
 <Dialog.Root bind:open>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>Edit subject name</Dialog.Title>
+			<Dialog.Title>Edit subject</Dialog.Title>
 			<Dialog.Description>{subject.name}</Dialog.Description>
 		</Dialog.Header>
 
 		<div class="space-y-2">
+			<Label for="name">Subject name</Label>
 			<Input
+				id="name"
 				type="text"
 				required
 				placeholder={`Name for "${subject.name}"`}
@@ -89,16 +97,13 @@
 				}}
 			/>
 			{#if message}
-				<div transition:slide|global class="text-sm text-error-foreground">{message}</div>
+				<div transition:slide class="text-sm text-error-foreground">{message}</div>
 			{/if}
 		</div>
 
 		<Dialog.Footer class="gap-y-2">
 			<Button variant="secondary" onclick={() => (open = false)}>Close</Button>
-			<Button
-				disabled={isUpdating || !validName.safeParse(subjectNameInput).success}
-				onclick={updateName}
-			>
+			<Button disabled={isUpdating || !parsedInput.success} onclick={updateName}>
 				{#if isUpdating}
 					<LoaderCircleIcon class="animate-spin" /> Updating...
 				{:else}

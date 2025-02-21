@@ -16,6 +16,8 @@
 
 	let enrollments = $state([...xenrollments]);
 	let representatives = $state([...subject.representatives]);
+
+	const subjectPeriodCount = Number(subject.periodCount);
 </script>
 
 {#if representatives.length === 0}
@@ -38,6 +40,7 @@
 	</Table.Header>
 	<Table.Body>
 		{#each enrollments as enrollment}
+			{@const attended = subjectPeriodCount - enrollment.student.absentCount}
 			<Table.Row>
 				<Table.Cell class="w-fit">{enrollment.student.rollNumber}</Table.Cell>
 				<Table.Cell class="font-medium">{enrollment.student.fullName}</Table.Cell>
@@ -49,9 +52,7 @@
 					{/if}
 				</Table.Cell>
 				<Table.Cell class="text-center">
-					{@const classes = Number(subject.periodCount)}
-					{@const attended = classes - enrollment.student.absentCount}
-					{cutePercent(safeDivision(attended, classes) * 100)} % ({attended} / {classes})
+					{cutePercent(safeDivision(attended, subjectPeriodCount) * 100)} % ({attended} / {subjectPeriodCount})
 				</Table.Cell>
 				<Table.Cell class="text-center">
 					<!-- TODO: make this drop down a dialog upon clicking the row -->
