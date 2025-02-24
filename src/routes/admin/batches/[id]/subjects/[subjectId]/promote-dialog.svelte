@@ -7,22 +7,21 @@
 	import { EllipsisVerticalIcon, LoaderCircleIcon } from "lucide-svelte";
 	import type { Data, Payload, Result } from "$lib/types";
 	import { toast } from "svelte-sonner";
-	import { type Representative } from "$lib/server/db/schema";
 
 	let {
-		subject,
+		subject = $bindable(),
 		enrollments = $bindable(),
 		enrollmentId,
-		representatives = $bindable(),
 	}: {
 		enrollments: Awaited<ReturnType<typeof getEnrolledStudents>>;
 		enrollmentId: number;
 		subject: Awaited<ReturnType<typeof getSubject>>;
-		representatives: (Representative & { student: { fullName: string } })[];
 	} = $props();
 
 	let enrollment = $derived(enrollments.find((enrollment) => enrollment.id === enrollmentId)!);
-	let represents = $derived(representatives.some((rep) => rep.studentId === enrollment.student.id));
+	let represents = $derived(
+		subject.representatives.some((rep) => rep.studentId === enrollment.student.id),
+	);
 
 	let promoteDialogOpen = $state(false);
 	let isPromoteLoading = $state(false);
@@ -53,10 +52,12 @@
 			toast.error(`Failed to ${represents ? "demote" : "promote"} the student.`);
 		} else {
 			if (result.data.status === "demoted") {
-				const index = representatives.findIndex((rep) => rep.id === result.data.representative.id);
-				if (index !== -1) representatives.splice(index, 1);
+				const index = subject.representatives.findIndex(
+					(rep) => rep.id === result.data.representative.id,
+				);
+				if (index !== -1) subject.representatives.splice(index, 1);
 			} else if (result.data.status === "promoted") {
-				representatives.push({
+				subject.representatives.push({
 					...result.data.representative,
 					student: { fullName: enrollment.student.fullName },
 				});
@@ -95,8 +96,10 @@
 		}
 
 		if (represents) {
-			const repIndex = representatives.findIndex((rep) => rep.studentId === enrollment.student.id);
-			if (repIndex !== -1) representatives.splice(repIndex, 1);
+			const repIndex = subject.representatives.findIndex(
+				(rep) => rep.studentId === enrollment.student.id,
+			);
+			if (repIndex !== -1) subject.representatives.splice(repIndex, 1);
 		}
 		const enrollmentIndex = enrollments.findIndex(({ id }) => enrollment.id === id);
 		if (enrollmentIndex !== -1) enrollments.splice(enrollmentIndex, 1);
@@ -124,10 +127,10 @@
 				attendance of the batchmates.
 			</p>
 
-			{#if representatives.length > 1}
+			{#if subject.representatives.length > 1}
 				<p>The following students will be left for representing the students:</p>
 				<ul class="ml-4 list-inside list-disc">
-					{#each representatives.filter((rep) => rep.studentId !== enrollment.student.id) as rep}
+					{#each subject.representatives.filter((rep) => rep.studentId !== enrollment.student.id) as rep}
 						<li class="list-item">{rep.student.fullName}</li>
 					{/each}
 				</ul>
@@ -182,7 +185,7 @@
 				manage the attendance of the other students.
 			</p>
 
-			{#if representatives.length === 1}
+			{#if subject.representatives.length === 1}
 				<p class="font-semibold text-warning-foreground">
 					Warning: There won't be any representatives left for the subject {subject.name}.
 				</p>

@@ -2,11 +2,7 @@
 	import Input from "$lib/components/ui/input/input.svelte";
 	import { DeleteIcon, SearchIcon } from "lucide-svelte";
 
-	let {
-		value = $bindable(""),
-	}: {
-		value: string;
-	} = $props();
+	let { value = $bindable("") }: { value: string } = $props();
 </script>
 
 <div class="relative flex w-full items-center">

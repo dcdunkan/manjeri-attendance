@@ -5,7 +5,7 @@ import { and, eq } from "drizzle-orm";
 export async function getSubjectRepresentatives(subjectId: number) {
 	return await db.query.representatives.findMany({
 		where: () => eq(schema.representatives.subjectId, subjectId),
-		with: { student: true },
+		with: { student: { columns: { id: true } } },
 		columns: { id: true },
 	});
 }

@@ -3,7 +3,7 @@
 	import type { ArrayIndices } from "$lib/types";
 	import { ArrowDown10Icon, ArrowUp01Icon, ArrowUpDownIcon } from "lucide-svelte";
 	import type { EnrolledStudent } from "./types";
-	import SearchInput from "./search-input.svelte";
+	import SearchInput from "$lib/components/search-input.svelte";
 	import { cutePercent, safeDivision } from "$lib/helpers";
 
 	let {

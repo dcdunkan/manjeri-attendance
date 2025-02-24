@@ -1,11 +1,13 @@
 /* eslint-disable @typescript-eslint/no-namespace */
 import type * as schema from "$lib/server/db/schema";
+import type { getEnrolledStudents } from "./server/db/enrollments";
 import type {
 	deletePeriod,
 	getMonthlyStudentPeriods,
 	getPeriod,
 	getPeriods,
 } from "./server/db/periods";
+import type { getSubjectRepresentatives } from "./server/db/representations";
 import type { getAbsentPeriods } from "./server/db/students";
 
 export namespace Payload {
@@ -41,6 +43,19 @@ export namespace Payload {
 			absentees: number[];
 		}
 	}
+
+	export namespace EnrollStudents {
+		export type GET = {
+			batchId: number;
+		};
+
+		export type POST = {
+			batchId: number;
+			subjectId: number;
+			enroll: number[];
+			delist: number[];
+		};
+	}
 }
 
 export type Result<T = undefined> = { ok: false; reason: string } | { ok: true; data: T };
@@ -70,6 +85,24 @@ export namespace Data {
 
 	export interface DelistEnrollment {
 		absentCount: number;
+	}
+
+	export namespace EnrollStudents {
+		export type GET = {
+			batchStudents: {
+				id: number;
+				fullName: string;
+				rollNumber: number;
+			}[];
+			enrollments: AwaitReturn<typeof getEnrolledStudents>;
+			representatives: AwaitReturn<typeof getSubjectRepresentatives>;
+		};
+
+		export type POST = {
+			enrollments: { id: number; studentId: number }[];
+			delists: { id: number; studentId: number }[];
+			demoted: { id: number; studentId: number }[];
+		};
 	}
 
 	export type MonthlyStudentPeriods = AwaitReturn<typeof getMonthlyStudentPeriods>;

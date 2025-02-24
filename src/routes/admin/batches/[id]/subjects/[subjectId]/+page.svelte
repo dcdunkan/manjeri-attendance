@@ -1,7 +1,6 @@
 <script lang="ts">
-	import DataLoader from "$lib/components/data-loader.svelte";
 	import NavigationHeader from "$lib/components/navigation-header.svelte";
-	import { EditIcon } from "lucide-svelte";
+	import { EditIcon, SquareUserRound, UserRoundPlusIcon, UsersRoundIcon } from "lucide-svelte";
 	import type { PageData } from "./$types";
 	import EnrollmentTable from "./enrollment-table.svelte";
 	import { Button } from "$lib/components/ui/button";
@@ -14,6 +13,7 @@
 	import { onMount } from "svelte";
 	import { toast } from "svelte-sonner";
 	import { cutePercent, pluralize, safeDivision } from "$lib/helpers";
+	import ManageStudentDialog from "./manage-student-dialog.svelte";
 
 	let { data }: { data: PageData } = $props();
 
@@ -42,6 +42,7 @@
 		}
 	});
 
+	let showAddDialog = $state(false);
 	let showEditDialog = $state(false);
 </script>
 
@@ -53,8 +54,17 @@
 	</LoadingCard>
 {:else if subject.state === "resolved"}
 	<div class="flex place-items-center justify-between">
-		<h1 class="text-2xl">{subject.data.name}</h1>
-		<Button variant="outline" onclick={() => (showEditDialog = true)}><EditIcon /> Edit</Button>
+		<h1 class="flex place-items-baseline gap-2 text-2xl">
+			{subject.data.name}
+			<button onclick={() => (showEditDialog = true)}>
+				<EditIcon class="size-4 text-muted-foreground" />
+			</button>
+		</h1>
+		<div>
+			<Button variant="outline" onclick={() => (showAddDialog = true)}>
+				<UsersRoundIcon /> Manage
+			</Button>
+		</div>
 	</div>
 
 	<EditSubjectDialog bind:open={showEditDialog} bind:subject={subject.data} />
@@ -67,6 +77,12 @@
 		{@const totalAbsents = enrollments.data.reduce((p, c) => p + c.student.absentCount, 0)}
 		{@const totalPeriodEvents = subject.data.periodCount * enrollments.data.length}
 
+		<ManageStudentDialog
+			bind:open={showAddDialog}
+			bind:subject={subject.data}
+			bind:enrollments={enrollments.data}
+		/>
+
 		<div class="grid grid-cols-3 gap-4 rounded border p-4">
 			<div class="flex flex-col items-center justify-center">
 				<div class="text-sm">{pluralize(enrollments.data.length, "student", "students")}</div>
@@ -77,7 +93,7 @@
 				<div class="text-center">
 					<div class="text-sm">overall</div>
 				</div>
-				<div class="text-2xl">
+				<div class="text-3xl">
 					{cutePercent(safeDivision(totalPeriodEvents - totalAbsents, totalPeriodEvents) * 100)} %
 				</div>
 				<div class="text-sm">attendance</div>
@@ -101,7 +117,23 @@
 
 		<p>Use the actions button to manage the representative role, or delist the student.</p>
 
-		<EnrollmentTable subject={subject.data} enrollments={enrollments.data} />
+		{#if enrollments.data.length > 0}
+			<EnrollmentTable bind:subject={subject.data} enrollments={enrollments.data} />
+		{:else}
+			<div
+				class="flex w-full flex-col items-center justify-center gap-2 rounded border border-dashed p-4 text-muted-foreground"
+			>
+				<SquareUserRound class="size-5" />
+				<div class="text-sm">There are no students enrolled to the subject.</div>
+				<button
+					onclick={() => (showAddDialog = true)}
+					class="flex place-items-center items-center justify-center gap-x-2 rounded border px-3 py-1"
+				>
+					<UserRoundPlusIcon class="size-3" />
+					<div class="text-sm">Add students</div>
+				</button>
+			</div>
+		{/if}
 	{:else if enrollments.state === "failed"}
 		<LoadingFailedCard>
 			<div>{enrollments.message}</div>

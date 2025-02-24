@@ -7,7 +7,7 @@ they currently do not have a digital attendance system.
 
 ====== DEVELOPMENT NOTES
 
-> Roadmap (17/28)
+> Roadmap (18/28)
 
 [x] Authorization
     [x] Login & logout
@@ -29,12 +29,12 @@ they currently do not have a digital attendance system.
     [x] Mark attendance
     [x] Edit period & attendance
     [x] Delete period
-[ ] Subject / enrollment list
+[x] Subject / enrollment list
     [x] Subject name editor dialog
     [x] Make it reactive
     [x] Delist the student
     [x] Overall attendance statistics
-    [ ] Enroll students from batch
+    [x] Enroll students from batch
 [x] Viewing attendance
     [x] Calculate attendance
     [x] Show total in dashboard

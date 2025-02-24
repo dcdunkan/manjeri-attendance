@@ -22,7 +22,7 @@
 	import * as DropdownMenu from "$lib/components/ui/dropdown-menu";
 	import type { BaseDate, Data, LoadedData, Result } from "$lib/types";
 	import { toast } from "svelte-sonner";
-	import SearchInput from "./search-input.svelte";
+	import SearchInput from "$lib/components/search-input.svelte";
 	import * as Table from "$lib/components/ui/table";
 	import EditPeriodDialog from "./edit-period-dialog.svelte";
 	import { extractBaseDate, getWeekday, isPast, isSameDay } from "$lib/helpers";

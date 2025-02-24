@@ -7,7 +7,7 @@
 	import { toast } from "svelte-sonner";
 	import { Button } from "$lib/components/ui/button";
 	import { CircleCheckBigIcon, LoaderCircleIcon, TableIcon } from "lucide-svelte";
-	import SearchInput from "./search-input.svelte";
+	import SearchInput from "$lib/components/search-input.svelte";
 	import { Checkbox } from "$lib/components/ui/checkbox";
 	import { Label } from "$lib/components/ui/label";
 	import { extractBaseDate, longDateFormatter } from "$lib/helpers";

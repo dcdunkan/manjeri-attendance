@@ -17,7 +17,7 @@
 	import { Label } from "$lib/components/ui/label";
 	import { toast } from "svelte-sonner";
 	import type { Data, Payload, Result } from "$lib/types";
-	import SearchInput from "./search-input.svelte";
+	import SearchInput from "$lib/components/search-input.svelte";
 	import { longDateFormatter } from "$lib/helpers";
 
 	let {
