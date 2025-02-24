@@ -7,7 +7,7 @@ they currently do not have a digital attendance system.
 
 ====== DEVELOPMENT NOTES
 
-> Roadmap (18/28)
+> Roadmap (20/28)
 
 [x] Authorization
     [x] Login & logout
@@ -20,8 +20,8 @@ they currently do not have a digital attendance system.
     [ ] Edit student
     [ ] Delete student from batch
 [ ] Subjects
-    [ ] Edit subject details
-    [ ] Delist students
+    [x] Edit subject details
+    [x] Delist students
     [ ] Destroy subject
 [x] Representations
     [x] Promote / demote
