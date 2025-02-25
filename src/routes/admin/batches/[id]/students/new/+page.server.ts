@@ -8,7 +8,7 @@ import { getBatchWithSubjects } from "$lib/server/db/batches";
 import * as tables from "$lib/server/db/schema";
 import { redirect } from "@sveltejs/kit";
 import { and, eq } from "drizzle-orm";
-import { Argon2id } from "oslo/password";
+import { hashPassword } from "$lib/server/auth";
 
 export const load: PageServerLoad = async (event) => {
 	const batchId = Number(event.params.id);
@@ -45,7 +45,7 @@ export const actions: Actions = {
 				return setError(form, "loginId", "Student with the same login ID already exists.");
 			}
 
-			const passwordHash = await new Argon2id().hash(form.data.password);
+			const passwordHash = await hashPassword(form.data.password);
 
 			// TODO: Make all the DB transactions abstractions & repositories
 			const [account] = await db

@@ -1,6 +1,7 @@
 import { db } from "$lib/server/db";
 import * as schema from "$lib/server/db/schema";
 import { and, desc, eq, sql } from "drizzle-orm";
+import { verifyHash } from "$lib/server/auth";
 
 export async function getStudents(batchId: number) {
 	return await db.query.students.findMany({
@@ -94,4 +95,14 @@ export async function getAbsentPeriods(studentId: number, subjectId: number) {
 	// });
 }
 
-// export async function getAttendanceOverview(studentId: number) {}
+export async function isUnsafePasswordSaved(accountId: number) {
+	const [account] = await db
+		.select({
+			login: schema.accounts.login,
+			passwordHash: schema.accounts.passwordHash,
+		})
+		.from(schema.accounts)
+		.where(eq(schema.accounts.id, accountId));
+	if (account == null) return false;
+	return await verifyHash(account.passwordHash, account.login);
+}

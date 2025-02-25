@@ -56,6 +56,11 @@ export namespace Payload {
 			delist: number[];
 		};
 	}
+
+	export interface ChangePassword {
+		currentPassword: string;
+		newPassword: string;
+	}
 }
 
 export type Result<T = undefined> = { ok: false; reason: string } | { ok: true; data: T };

@@ -35,7 +35,7 @@
 </script>
 
 <div class="sticky">
-	<SearchInput bind:value={filterString} />
+	<SearchInput bind:value={filterString} placeholder="Filter students..." />
 </div>
 
 <Table.Root class="mt-3">

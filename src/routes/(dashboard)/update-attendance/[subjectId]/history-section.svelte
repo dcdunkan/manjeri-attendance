@@ -149,7 +149,7 @@
 </script>
 
 <div class="sticky top-0 z-10 space-y-4 border-b bg-background py-6">
-	<SearchInput bind:value={filterString} />
+	<SearchInput bind:value={filterString} placeholder="Filter students..." />
 
 	<div class="flex w-full justify-center gap-2">
 		<Select.Root

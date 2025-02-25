@@ -118,7 +118,7 @@
 			<Dialog.Description>{subject.name}</Dialog.Description>
 		</Dialog.Header>
 
-		<SearchInput bind:value={filterString} />
+		<SearchInput bind:value={filterString} placeholder="Filter students..." />
 
 		<div class="flex-grow overflow-y-scroll rounded border">
 			{#if filteredStudents.length === 0}

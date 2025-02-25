@@ -38,7 +38,7 @@
 	</div>
 {/if}
 
-<SearchInput bind:value={filterString} />
+<SearchInput bind:value={filterString} placeholder="Filter students..." />
 
 <Table.Root>
 	<Table.Header>

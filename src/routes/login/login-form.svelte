@@ -45,12 +45,7 @@
 			<Form.Field {form} name="password">
 				<Form.Control>
 					{#snippet children({ props })}
-						<div class="flex items-center">
-							<Form.Label for="password">Password</Form.Label>
-							<a href="/forgot-password" class="ml-auto inline-block text-sm underline"
-								>Forgot your password?</a
-							>
-						</div>
+						<Form.Label for="password">Password</Form.Label>
 						<Input
 							{...props}
 							type="password"

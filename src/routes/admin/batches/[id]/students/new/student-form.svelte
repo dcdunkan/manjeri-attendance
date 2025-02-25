@@ -6,7 +6,7 @@
 		name: z.string().min(3).max(256),
 		rollNumber: z.number().min(1, "Roll number cannot be a negative number.").default(1),
 		loginId: z.string().min(4, "Too short."),
-		password: z.string().min(6, "Weak password.").max(256, "Can't be that heavy."),
+		password: z.string().min(6, "Weak password.").max(128, "Can't be that heavy."),
 		enrolledSubjects: z.array(z.number()),
 	});
 

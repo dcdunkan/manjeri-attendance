@@ -7,7 +7,7 @@ they currently do not have a digital attendance system.
 
 ====== DEVELOPMENT NOTES
 
-> Roadmap (20/28)
+> Roadmap (21/27)
 
 [x] Authorization
     [x] Login & logout
@@ -42,11 +42,10 @@ they currently do not have a digital attendance system.
     [x] Subject wise view
     [x] Show total in attendance view sections
 [ ] Account settings
-    [ ] Set display name
-    [ ] Modify password
-    [ ] Forgot password in login
+    [x] Modify password
+    [ ] Sessions and devices
 
-> Refinements needed:
+> Refinements to be considered:
 
 [ ] track who & when attendance marked (attendance history schema)
 [ ] figure out loading spinners in forms after submission. (submit state visualization)

@@ -49,6 +49,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 		} else return error(403, "Forbidden");
 	}
 
+	// Get rid of representative "role"
 	if (route.startsWith(routes.studentApis)) {
 		if (event.locals.account.role === "student") return resolve(event);
 		return error(403, "Forbidden");
