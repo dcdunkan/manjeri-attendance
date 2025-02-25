@@ -31,14 +31,11 @@
 	<div class="text-2xl font-medium">Registered batches</div>
 	<div class="flex gap-2">
 		<!-- TODO: <Button variant="outline" class="aspect-square"><ListRestartIcon /></Button> -->
-		<a href="batches/new"> <Button variant="secondary"><ListPlusIcon /> Add batch</Button></a>
+		<Button href="batches/new" variant="secondary"><ListPlusIcon /> Add batch</Button>
 	</div>
 </div>
 
-<p>
-	Batches and subjects can be created or updated through here. Click one of the batches to modify
-	the subject list and other details of the batch. To register a new batch, click "Add batch".
-</p>
+<p>Click one of the batches to manage students and subjects of the batch.</p>
 
 {#if batches.state === "pending"}
 	<LoadingCard>

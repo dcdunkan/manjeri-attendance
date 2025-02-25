@@ -37,7 +37,7 @@
 	{:else}
 		<div class="flex place-items-center justify-between">
 			<h1 class="text-2xl">Batch {batch.data.name}</h1>
-			<a href="{batch.data.id}/edit"><Button variant="outline"><EditIcon /> Edit</Button></a>
+			<Button href="{batch.data.id}/edit" variant="outline"><EditIcon /> Edit</Button>
 		</div>
 
 		<div class="flex place-items-center justify-center gap-10 rounded-lg border p-6">
@@ -76,10 +76,7 @@
 		<div class="space-y-4">
 			<h2 class="font-serif text-2xl font-medium italic">Subjects</h2>
 
-			<p>
-				Subjects linked with the subjects are listed below. Select a subject to see students
-				enrolled, representatives and attendance statistics.
-			</p>
+			<p>Select a subject to see students enrolled, attendance statistics and manage statistics.</p>
 
 			<div class="space-y-2">
 				{#each batch.data.subjects as subject, i}
