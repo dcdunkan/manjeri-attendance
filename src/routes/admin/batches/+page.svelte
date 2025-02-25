@@ -3,10 +3,26 @@
 	import { Button } from "$lib/components/ui/button";
 	import { ListPlusIcon } from "lucide-svelte";
 	import BatchTable from "./batch-table.svelte";
-	import DataLoader from "$lib/components/data-loader.svelte";
 	import EmptyInfobox from "$lib/components/empty-infobox.svelte";
+	import type { LoadedData } from "$lib/types";
+	import { onMount } from "svelte";
+	import LoadingFailedCard from "$lib/components/loading-failed-card.svelte";
+	import LoadingCard from "$lib/components/loading-card.svelte";
 
 	let { data } = $props();
+
+	let batches = $state<LoadedData<Awaited<typeof data.batches>>>({
+		state: "pending",
+		message: "Loading batches...",
+	});
+	onMount(async () => {
+		try {
+			batches = { state: "resolved", data: await data.batches };
+		} catch (err) {
+			console.error(err);
+			batches = { state: "failed", message: "Failed to load batches." };
+		}
+	});
 </script>
 
 <NavigationHeader title="Batches" />
@@ -24,23 +40,23 @@
 	the subject list and other details of the batch. To register a new batch, click "Add batch".
 </p>
 
-<DataLoader promise={data.batches}>
-	{#snippet loadingMessage()}
-		<div>Loading batches...</div>
-	{/snippet}
-
-	{#snippet showData(batches: Awaited<typeof data.batches>)}
-		{#if batches.length > 0}
-			<BatchTable {batches} />
-		{:else}
-			<EmptyInfobox>
-				<p>No batches are registered yet.</p>
-				<p>Click "Add batch" to register a batch.</p>
-			</EmptyInfobox>
-		{/if}
-	{/snippet}
-
-	{#snippet errorMessage()}
-		<div>Failed to load batches.</div>
-	{/snippet}
-</DataLoader>
+{#if batches.state === "pending"}
+	<LoadingCard>
+		{batches.message}
+	</LoadingCard>
+{:else if batches.state === "resolved"}
+	{#if batches.data.length > 0}
+		<BatchTable batches={batches.data} />
+	{:else}
+		<EmptyInfobox>
+			<p>No batches are registered yet.</p>
+			<p>Click "Add batch" to register a batch.</p>
+		</EmptyInfobox>
+	{/if}
+{:else if batches.state === "failed"}
+	<LoadingFailedCard>
+		{batches.message}
+	</LoadingFailedCard>
+{:else}
+	<LoadingFailedCard>Unknown action.</LoadingFailedCard>
+{/if}

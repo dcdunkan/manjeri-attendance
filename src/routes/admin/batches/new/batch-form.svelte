@@ -17,7 +17,7 @@
 	import { Input } from "$lib/components/ui/input";
 	import * as Form from "$lib/components/ui/form";
 	import { Button } from "$lib/components/ui/button";
-	import { PlusIcon, XIcon } from "lucide-svelte";
+	import { LoaderCircleIcon, PlusIcon, XIcon } from "lucide-svelte";
 	import { toast } from "svelte-sonner";
 	import EmptyInfobox from "$lib/components/empty-infobox.svelte";
 
@@ -31,7 +31,7 @@
 			toast.error(event.result.error.message);
 		},
 	});
-	const { form: formData, enhance } = form;
+	const { form: formData, enhance, submitting } = form;
 
 	let subjectInput = $state<string>("");
 	let subjectInputElement = $state<HTMLInputElement | null>(null);
@@ -121,5 +121,11 @@
 			</div>
 		</div>
 	</Form.Fieldset>
-	<Form.Button>Register batch</Form.Button>
+	<Form.Button disabled={$submitting}>
+		{#if $submitting}
+			<LoaderCircleIcon class="animate-spin" />
+		{:else}
+			Register batch
+		{/if}
+	</Form.Button>
 </form>

@@ -45,7 +45,7 @@ they currently do not have a digital attendance system.
     [x] Modify password
     [ ] Sessions and devices
 
-> Refinements to be considered:
+> Refinements to be considered (1/14):
 
 [ ] creations & updations datetimes
 [ ] algorithm for display name
