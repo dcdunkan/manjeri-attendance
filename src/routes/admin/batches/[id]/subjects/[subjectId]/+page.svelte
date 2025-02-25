@@ -1,6 +1,12 @@
 <script lang="ts">
 	import NavigationHeader from "$lib/components/navigation-header.svelte";
-	import { EditIcon, SquareUserRound, UserRoundPlusIcon, UsersRoundIcon } from "lucide-svelte";
+	import {
+		EditIcon,
+		SquareUserRound,
+		Trash2Icon,
+		UserRoundPlusIcon,
+		UsersRoundIcon,
+	} from "lucide-svelte";
 	import type { PageData } from "./$types";
 	import EnrollmentTable from "./enrollment-table.svelte";
 	import { Button } from "$lib/components/ui/button";
@@ -14,6 +20,7 @@
 	import { toast } from "svelte-sonner";
 	import { cutePercent, pluralize, safeDivision } from "$lib/helpers";
 	import ManageStudentDialog from "./manage-student-dialog.svelte";
+	import DeleteSubjectDialog from "./delete-subject-dialog.svelte";
 
 	let { data }: { data: PageData } = $props();
 
@@ -42,8 +49,9 @@
 		}
 	});
 
-	let showAddDialog = $state(false);
-	let showEditDialog = $state(false);
+	let showEnrollmentManageDialog = $state(false);
+	let showSubjectEditDialog = $state(false);
+	let showDeleteDialog = $state(false);
 </script>
 
 <NavigationHeader title="Details" />
@@ -56,29 +64,33 @@
 	<div class="flex place-items-center justify-between">
 		<h1 class="flex place-items-baseline gap-2 text-2xl">
 			{subject.data.name}
-			<button onclick={() => (showEditDialog = true)}>
+			<button onclick={() => (showSubjectEditDialog = true)}>
 				<EditIcon class="size-4 text-muted-foreground" />
 			</button>
 		</h1>
 		<div>
-			<Button variant="outline" onclick={() => (showAddDialog = true)}>
+			<Button variant="outline" onclick={() => (showEnrollmentManageDialog = true)}>
 				<UsersRoundIcon /> Manage
+			</Button>
+			<Button variant="destructive" onclick={() => (showDeleteDialog = true)}>
+				<Trash2Icon />
 			</Button>
 		</div>
 	</div>
 
-	<EditSubjectDialog bind:open={showEditDialog} bind:subject={subject.data} />
+	<EditSubjectDialog bind:open={showSubjectEditDialog} bind:subject={subject.data} />
+	<DeleteSubjectDialog bind:open={showDeleteDialog} subject={subject.data} />
 
 	{#if enrollments.state === "pending"}
 		<LoadingCard>
 			<div>{enrollments.message}</div>
 		</LoadingCard>
 	{:else if enrollments.state === "resolved"}
-		{@const totalAbsents = enrollments.data.reduce((p, c) => p + c.student.absentCount, 0)}
-		{@const totalPeriodEvents = subject.data.periodCount * enrollments.data.length}
+		{@const totalAbsents = enrollments.data.reduce((p, c) => p + Number(c.student.absentCount), 0)}
+		{@const totalPeriodEvents = Number(subject.data.periodCount) * enrollments.data.length}
 
 		<ManageStudentDialog
-			bind:open={showAddDialog}
+			bind:open={showEnrollmentManageDialog}
 			bind:subject={subject.data}
 			bind:enrollments={enrollments.data}
 		/>
@@ -105,7 +117,9 @@
 			</div>
 
 			<div class="flex flex-col items-center justify-center">
-				<div class="text-sm">{pluralize(subject.data.periodCount || 0, "period", "periods")}</div>
+				<div class="text-sm">
+					{pluralize(Number(subject.data.periodCount) || 0, "period", "periods")}
+				</div>
 				<div class="text-xl">{subject.data.periodCount}</div>
 			</div>
 
@@ -126,7 +140,7 @@
 				<SquareUserRound class="size-5" />
 				<div class="text-sm">There are no students enrolled to the subject.</div>
 				<button
-					onclick={() => (showAddDialog = true)}
+					onclick={() => (showEnrollmentManageDialog = true)}
 					class="flex place-items-center items-center justify-center gap-x-2 rounded border px-3 py-1"
 				>
 					<UserRoundPlusIcon class="size-3" />

@@ -7,14 +7,14 @@ they currently do not have a digital attendance system.
 
 ====== DEVELOPMENT NOTES
 
-> Roadmap (21/27)
+> Roadmap (23/27)
 
 [x] Authorization
     [x] Login & logout
 [ ] Batches
     [x] Create batch
     [ ] Edit batch
-    [ ] Destroy batch
+    [x] Destroy batch
 [ ] Students
     [x] Register batch student
     [ ] Edit student
@@ -22,7 +22,7 @@ they currently do not have a digital attendance system.
 [ ] Subjects
     [x] Edit subject details
     [x] Delist students
-    [ ] Destroy subject
+    [x] Destroy subject
 [x] Representations
     [x] Promote / demote
     [x] See history and overview
@@ -62,3 +62,4 @@ they currently do not have a digital attendance system.
 [ ] drizzle transactions / batch operations
 [ ] Make all the DB transactions abstractions & repositories
 [ ] Confirm whether form validations are enough
+[ ] Errors 404, 500

@@ -32,7 +32,7 @@ export const accountsRelations = relations(accounts, ({ one, many }) => ({
 		references: [students.id],
 		relationName: "account_student",
 	}),
-	// Multiple sessions can be
+	// Multiple sessions can be linked to an account:
 	sessions: many(sessions, { relationName: "account_sessions" }),
 }));
 
@@ -42,7 +42,7 @@ export const sessions = pgTable("sessions", {
 	id: text("id").primaryKey(),
 	accountId: integer("account_id")
 		.notNull()
-		.references(() => accounts.id),
+		.references(() => accounts.id, { onDelete: "cascade" }),
 	expiresAt: timestamp("expires_at", { mode: "date", withTimezone: true }).notNull(),
 });
 
@@ -70,12 +70,12 @@ export const batchesRelations = relations(batches, ({ many }) => ({
 export const students = pgTable("students", {
 	id: integer("id")
 		.primaryKey()
-		.references(() => accounts.id),
+		.references(() => accounts.id, { onDelete: "cascade" }),
 	fullName: text("full_name").notNull(),
 	rollNumber: integer("roll_number").notNull(),
 	batchId: integer("batch_id")
 		.notNull()
-		.references(() => batches.id),
+		.references(() => batches.id, { onDelete: "cascade" }),
 	// POSSIBLY REMOVE THIS? COUNT REPRESENTATIONS INSTEAD.
 	isRep: boolean("is_representative").default(false).notNull(),
 });
@@ -106,7 +106,7 @@ export const subjects = pgTable("subjects", {
 	name: text("name").notNull(),
 	batchId: integer("batch_id")
 		.notNull()
-		.references(() => batches.id),
+		.references(() => batches.id, { onDelete: "cascade" }),
 });
 
 export const subjectsRelations = relations(subjects, ({ one, many }) => ({
@@ -127,10 +127,10 @@ export const enrollments = pgTable("enrollments", {
 	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
 	subjectId: integer("subject_id")
 		.notNull()
-		.references(() => subjects.id),
+		.references(() => subjects.id, { onDelete: "cascade" }),
 	studentId: integer("student_id")
 		.notNull()
-		.references(() => students.id),
+		.references(() => students.id, { onDelete: "cascade" }),
 });
 
 export const enrollmentsRelations = relations(enrollments, ({ one }) => ({
@@ -151,7 +151,7 @@ export const periods = pgTable("periods", {
 	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
 	subjectId: integer("subject_id")
 		.notNull()
-		.references(() => subjects.id),
+		.references(() => subjects.id, { onDelete: "cascade" }),
 	date: date("date", { mode: "date" }).notNull(),
 });
 
@@ -170,13 +170,13 @@ export const absentees = pgTable("absentees", {
 	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
 	studentId: integer("student_id")
 		.notNull()
-		.references(() => students.id),
+		.references(() => students.id, { onDelete: "cascade" }),
 	subjectId: integer("subject_id")
 		.notNull()
-		.references(() => subjects.id),
+		.references(() => subjects.id, { onDelete: "cascade" }),
 	periodId: integer("period_id")
 		.notNull()
-		.references(() => periods.id),
+		.references(() => periods.id, { onDelete: "cascade" }),
 });
 
 export const absenteesRelations = relations(absentees, ({ one }) => ({
@@ -202,10 +202,10 @@ export const representatives = pgTable("representatives", {
 	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
 	subjectId: integer("subject_id")
 		.notNull()
-		.references(() => subjects.id),
+		.references(() => subjects.id, { onDelete: "cascade" }),
 	studentId: integer("student_id")
 		.notNull()
-		.references(() => students.id),
+		.references(() => students.id, { onDelete: "cascade" }),
 });
 
 export const representativesRelations = relations(representatives, ({ one }) => ({

@@ -193,7 +193,7 @@
 		{/if}
 
 		<Dialog.Footer>
-			<Button disabled={isDelistLoading} onclick={delistEnrollment}>
+			<Button variant="destructive" disabled={isDelistLoading} onclick={delistEnrollment}>
 				{#if isDelistLoading}
 					<LoaderCircleIcon class="size-3 animate-spin" />
 				{:else}

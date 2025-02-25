@@ -248,8 +248,10 @@
 										<Table.Cell class="flex justify-end">
 											{#if student.pending}
 												<LoaderCircleIcon class="size-4 animate-spin" />
-											{:else}
+											{:else if student.enrolled}
 												<MinusIcon class="size-4" />
+											{:else}
+												<PlusIcon class="size-4" />
 											{/if}
 										</Table.Cell>
 									</Table.Row>

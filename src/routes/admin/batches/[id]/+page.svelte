@@ -1,6 +1,13 @@
 <script lang="ts">
 	import NavigationHeader from "$lib/components/navigation-header.svelte";
-	import { ArrowRightIcon, BookUserIcon, EditIcon, Icon, UserPlusIcon } from "lucide-svelte";
+	import {
+		ArrowRightIcon,
+		BookUserIcon,
+		EditIcon,
+		Icon,
+		Trash2Icon,
+		UserPlusIcon,
+	} from "lucide-svelte";
 	import type { PageData } from "./$types";
 	import { Button } from "$lib/components/ui/button";
 	import EmptyInfobox from "$lib/components/empty-infobox.svelte";
@@ -8,6 +15,7 @@
 	import { onMount } from "svelte";
 	import LoadingCard from "$lib/components/loading-card.svelte";
 	import LoadingFailedCard from "$lib/components/loading-failed-card.svelte";
+	import DeleteBatchDialog from "./delete-batch-dialog.svelte";
 
 	let { data }: { data: PageData } = $props();
 	let pageTitle = $state<string>("Batch Details");
@@ -25,6 +33,8 @@
 			batch = { state: "failed", message: "Failed to load batch details." };
 		}
 	});
+
+	let showDeleteBatchDialog = $state(false);
 </script>
 
 <NavigationHeader title={pageTitle} />
@@ -37,8 +47,15 @@
 	{:else}
 		<div class="flex place-items-center justify-between">
 			<h1 class="text-2xl">Batch {batch.data.name}</h1>
-			<Button href="{batch.data.id}/edit" variant="outline"><EditIcon /> Edit</Button>
+			<div>
+				<Button href="{batch.data.id}/edit" variant="outline"><EditIcon /> Edit</Button>
+				<Button variant="destructive" onclick={() => (showDeleteBatchDialog = true)}>
+					<Trash2Icon />
+				</Button>
+			</div>
 		</div>
+
+		<DeleteBatchDialog bind:open={showDeleteBatchDialog} batch={batch.data} />
 
 		<div class="flex place-items-center justify-center gap-10 rounded-lg border p-6">
 			<div class="text-right">
