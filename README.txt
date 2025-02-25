@@ -50,14 +50,15 @@ they currently do not have a digital attendance system.
 [ ] creations & updations datetimes
 [ ] algorithm for display name
 [ ] track who & when attendance marked (attendance history schema)
-[x] figure out loading spinners in forms after submission. (submit state visualization)
-[ ] redo navigation bar (fix it and make it sticky, simplify it. try to include it in layouts)
+[x] figure out loading spinners in forms after submission.
+[ ] redo navigation bar
 [ ] redis integration
 [ ] add head-titles
 [ ] use global stores for global data
 [ ] switch to data tables instead of normal tables
 [ ] extra verifications for auth in server routes
-[ ] verify if the attendance is marked/edited/deleted within the allowed time period (last 7 days)
+[ ] verify if the attendance is marked/edited/deleted within
+    the allowed time period (last 7 days)
 [ ] drizzle transactions / batch operations
 [ ] Make all the DB transactions abstractions & repositories
 [ ] Confirm whether form validations are enough
