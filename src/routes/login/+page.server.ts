@@ -2,7 +2,7 @@ import type { Actions, PageServerLoad } from "./$types";
 import { superValidate } from "sveltekit-superforms";
 import { formSchema } from "./login-form.svelte";
 import { zod } from "sveltekit-superforms/adapters";
-import { fail, redirect } from "@sveltejs/kit";
+import { error, fail, redirect } from "@sveltejs/kit";
 import { db } from "$lib/server/db";
 import { and, eq } from "drizzle-orm";
 import * as tables from "$lib/server/db/schema";
@@ -34,10 +34,9 @@ export const actions: Actions = {
 			where: () => and(eq(tables.accounts.login, form.data.userId), eq(tables.accounts.role, role)),
 		});
 
-		// TODO: display these messages
-		if (account == null) return fail(400, { message: "Incorrect username or password" });
+		if (account == null) return error(404, { message: "Incorrect username or password." });
 		const validPassword = await verifyHash(account.passwordHash, form.data.password);
-		if (!validPassword) return fail(400, { message: "Incorrect username or password" });
+		if (!validPassword) return error(400, { message: "Incorrect username or password" });
 
 		const sessionToken = generateSessionToken();
 		const session = await createSession(sessionToken, account.id);

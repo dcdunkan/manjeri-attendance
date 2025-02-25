@@ -40,10 +40,15 @@ export async function getStudent(batchId: number, studentId: number) {
 							periodCount: db
 								.$count(
 									schema.periods,
-									// TODO: HACK: Drizzle db.$count bug which generates wrong query, when relational?
+									// HACK: Drizzle db.$count bug which generates wrong query, when relational?
 									// https://github.com/drizzle-team/drizzle-orm/issues/3564#issuecomment-2479782143
 									// for future reference, .toSQL() and debug the SQL statements to correct and do the following:
 									sql.raw(`"periods"."subject_id" = "students_enrollments_subject"."id"`),
+									// NOTE: quick not on how the `students_enrollments_subject` is created:
+									// `students` is the table which is queried. so, `students`.
+									// `students` with: `enrollments` => `students_enrollments`
+									// `students` with: `enrollments` with: `subject` => `students_enrollments_subject`
+									// (note added for future reference)
 								)
 								.mapWith(Number)
 								.as("period_count"),

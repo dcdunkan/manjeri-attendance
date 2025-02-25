@@ -35,12 +35,4 @@
 			</Table.Row>
 		{/each}
 	</Table.Body>
-	<!-- TODO: Do we really need the totals? -->
-	<!-- <Table.Footer>
-		<Table.Row>
-			<Table.Cell colspan={1}>Total</Table.Cell>
-			<Table.Cell class="text-right">{total.subjects}</Table.Cell>
-			<Table.Cell class="text-right">{total.students}</Table.Cell>
-		</Table.Row>
-	</Table.Footer> -->
 </Table.Root>

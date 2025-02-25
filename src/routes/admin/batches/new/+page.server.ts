@@ -2,7 +2,7 @@ import { setError, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import type { PageServerLoad, Actions } from "./$types";
 import { formSchema } from "./batch-form.svelte";
-import { fail, redirect } from "@sveltejs/kit";
+import { error, fail, redirect } from "@sveltejs/kit";
 import { db } from "$lib/server/db";
 import * as tables from "$lib/server/db/schema";
 import { eq } from "drizzle-orm";
@@ -20,7 +20,7 @@ export const actions: Actions = {
 			return fail(400, { form });
 		}
 
-		let batchId;
+		let batchId: number;
 		const { name: batchName, subjects } = form.data;
 		try {
 			const query = await db.query.batches.findFirst({ where: eq(tables.batches.name, batchName) });
@@ -34,9 +34,9 @@ export const actions: Actions = {
 				.values(subjects.map((subject) => ({ name: subject, batchId: batch.id })));
 			batchId = batch.id;
 			// Can't redirect here, since it `throw`s.
-		} catch (error) {
-			console.error(error);
-			return fail(400, { form });
+		} catch (err) {
+			console.error(err);
+			return error(500, "Something went wrong!");
 		}
 
 		return redirect(303, `/admin/batches/${batchId}`);

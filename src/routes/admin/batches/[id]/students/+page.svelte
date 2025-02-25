@@ -12,7 +12,7 @@
 <NavigationHeader title="Students" />
 
 <div class="flex place-items-center justify-between">
-	<div class="text-2xl font-medium">Students</div>
+	<div class="text-2xl">Students</div>
 	<div class="flex gap-2">
 		<!-- TODO: <Button variant="outline" class="aspect-square"><ListRestartIcon /></Button> -->
 		<a href="students/new"> <Button variant="secondary"><ListPlusIcon /> Add student</Button></a>

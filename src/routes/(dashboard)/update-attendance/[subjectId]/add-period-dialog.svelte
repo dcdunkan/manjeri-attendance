@@ -174,7 +174,6 @@
 				class="w-full"
 				disabled={students.length === 0 || isSaving}
 				onclick={async () => {
-					// TODO: add confirmation
 					isSaving = true;
 					const response = await fetch("/api/representative/mark-attendance", {
 						method: "POST",

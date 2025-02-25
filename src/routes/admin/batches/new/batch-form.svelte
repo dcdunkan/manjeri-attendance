@@ -2,9 +2,10 @@
 	import { z } from "zod";
 
 	export const formSchema = z.object({
-		name: z.string().min(2).max(64),
-		subjects: z.array(z.string()),
-		// TODO: .nonempty("Batch must have at least one subject."),
+		name: z.string().trim().min(2).max(64),
+		subjects: z
+			.array(z.string().trim().min(2).max(64))
+			.min(1, "Batch must have at least one subject."),
 	});
 
 	export type FormSchema = typeof formSchema;
@@ -27,9 +28,7 @@
 		delayMs: 1000,
 		clearOnSubmit: "errors-and-message",
 		onError: (event) => {
-			if (event.result.error.message) {
-				toast.error("Something went wrong!");
-			}
+			toast.error(event.result.error.message);
 		},
 	});
 	const { form: formData, enhance } = form;
@@ -39,9 +38,11 @@
 
 	function addSubject(subject: string) {
 		if ($formData.subjects.includes(subject)) {
-			return toast.error("Subject is already added!");
+			toast.error("Subject is already added!");
+			return false;
 		}
 		$formData.subjects = [...$formData.subjects, subject].toSorted();
+		return true;
 	}
 
 	function removeSubject(subject: string) {
@@ -70,10 +71,10 @@
 	<Form.Fieldset {form} name="subjects" class="space-y-0">
 		<div class="mb-4">
 			<Form.Legend class="text-base">Subjects</Form.Legend>
-			<Form.Description
-				>Add the subjects you want to assign to the batch. Subject names must be distinct. At least
-				one subject is required to register the batch.</Form.Description
-			>
+			<Form.Description>
+				Add the subjects you want to assign to the batch. Subject names must be distinct. At least
+				one subject is required to register the batch.
+			</Form.Description>
 		</div>
 		<div class="space-y-2">
 			<Form.FieldErrors />
@@ -111,9 +112,9 @@
 							subjectInput = "";
 							return toast.error("Invalid subject name");
 						}
-						addSubject(input);
+						const added = addSubject(input);
 						subjectInputElement?.focus();
-						subjectInput = ""; // clear the input
+						if (added) subjectInput = ""; // clear the input
 					}}
 					variant="secondary"><PlusIcon /> Add subject</Button
 				>

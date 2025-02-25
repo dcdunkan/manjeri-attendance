@@ -11,7 +11,6 @@ export const load: PageServerLoad = (event) => {
 
 	async function filteredStudentDetails() {
 		const student = await getStudent(batchId, id);
-		// TODO: make a way to show these fails in the `errorMessage` snippet.
 		if (student == null) throw new Error("Failed to get student details.");
 
 		return {

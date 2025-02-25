@@ -74,7 +74,6 @@
 	}
 
 	async function updateAttendance() {
-		// TODO: add confirmation
 		if (periodData.state !== "resolved" || isUpdating) return;
 
 		isUpdating = true;

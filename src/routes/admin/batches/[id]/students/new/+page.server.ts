@@ -1,4 +1,4 @@
-import { fail, message, setError, superValidate } from "sveltekit-superforms";
+import { fail, setError, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import type { PageServerLoad, Actions } from "./$types";
 import { formSchema } from "./student-form.svelte";
@@ -29,7 +29,7 @@ export const actions: Actions = {
 
 		const batchId = Number(event.params.id);
 		if (isNaN(batchId)) {
-			return message(form, { ok: false, message: "Batch ID is invalid" }, { status: 404 });
+			return error(404, { message: "Batch ID is invalid" });
 		}
 
 		let studentId: number;
@@ -47,7 +47,6 @@ export const actions: Actions = {
 
 			const passwordHash = await hashPassword(form.data.password);
 
-			// TODO: Make all the DB transactions abstractions & repositories
 			const [account] = await db
 				.insert(tables.accounts)
 				.values({
@@ -78,11 +77,11 @@ export const actions: Actions = {
 			);
 
 			studentId = account.id;
-		} catch (error) {
-			console.error(error);
-			return fail(400, { form });
+		} catch (err) {
+			console.error(err);
+			return error(500, "Something went wrong!");
 		}
 
-		return redirect(303, `/admin/batches/${batchId}/students/${studentId}`);
+		redirect(303, `/admin/batches/${batchId}/students/${studentId}`);
 	},
 };

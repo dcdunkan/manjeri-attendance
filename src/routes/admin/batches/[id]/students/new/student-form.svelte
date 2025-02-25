@@ -22,7 +22,7 @@
 	import type { getBatchWithSubjects } from "$lib/server/db/batches";
 	import { Label } from "$lib/components/ui/label";
 	import { Checkbox } from "$lib/components/ui/checkbox";
-	import { UserPlusIcon } from "lucide-svelte";
+	import { LoaderCircleIcon, UserPlusIcon } from "lucide-svelte";
 
 	let {
 		form: baseForm,
@@ -38,18 +38,10 @@
 		delayMs: 1000,
 		clearOnSubmit: "errors-and-message",
 		onError: (event) => {
-			if (event.result.error.message) {
-				toast.error("Something went wrong!");
-			}
+			toast.error(event.result.error.message);
 		},
 	});
-	const { form: formData, enhance, message } = form;
-
-	$effect(() => {
-		if ($message && typeof $message.ok === "boolean" && typeof $message.message === "string") {
-			toast[$message.ok ? "success" : "error"]($message.message);
-		}
-	});
+	const { form: formData, enhance, submitting } = form;
 
 	const generatedLoginId = generateLoginId(batch);
 	let hasGenerated = $state<boolean>(generatedLoginId != null);
@@ -63,6 +55,14 @@
 			{ taint: true },
 		);
 	}
+
+	formData.update(
+		($form) => {
+			$form.enrolledSubjects = [...batch.subjects.map(({ id }) => id)];
+			return $form;
+		},
+		{ taint: true },
+	);
 
 	let manualPassword = $state(false);
 
@@ -169,7 +169,7 @@
 			{#if hasGenerated == null}
 				Invalid roll number. Can't generate proper login ID.
 			{:else}
-				The user can login with the login ID <code>{hasGenerated}</code>.
+				The user can login with the login ID <code>{generatedLoginId}</code>.
 			{/if}
 		</div>
 	</Form.Field>
@@ -220,6 +220,11 @@
 		</div>
 	</Form.Fieldset>
 
-	<Form.Button><UserPlusIcon />Register student</Form.Button>
-	<!-- TODO: states for form submissions -->
+	<Form.Button disabled={$submitting}>
+		{#if $submitting}
+			<LoaderCircleIcon /> Registering...
+		{:else}
+			<UserPlusIcon />Register student
+		{/if}
+	</Form.Button>
 </form>

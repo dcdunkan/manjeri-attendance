@@ -50,7 +50,6 @@
 {:else if segments.length >= 1}
 	<Breadcrumb.Root>
 		<Breadcrumb.List>
-			<!-- TODO: slice segments into last X ones. -->
 			{#each segments as segment, i (i)}
 				{#if i === segments.length - 1}
 					<Breadcrumb.Item>
@@ -69,5 +68,3 @@
 		</Breadcrumb.List>
 	</Breadcrumb.Root>
 {/if}
-
-<!-- TODO: shrink navigation header -->

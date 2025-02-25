@@ -36,7 +36,6 @@
 
 <div class="mb-4">
 	<div class="text-muted-foreground">You're logged in as</div>
-	<!-- TODO: algorithm for display name, or just make an account setting? -->
 	<div class="mt-1 truncate text-3xl">{data.local.fullName}</div>
 </div>
 

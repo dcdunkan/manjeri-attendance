@@ -21,7 +21,9 @@ export async function GET({ request, locals }) {
 		const { searchParams } = new URL(request.url);
 		const params = Object.fromEntries(searchParams.entries());
 		const parsed = getSchema.safeParse(params);
-		if (!parsed.success) return notOk(parsed.error.message, 400);
+		if (!parsed.success) {
+			return notOk(parsed.error.issues[0]?.message ?? "Invalid inputs!", 400);
+		}
 		data = parsed.data;
 	} catch (error) {
 		console.error(error);
@@ -67,7 +69,9 @@ export async function POST({ request, locals }) {
 	try {
 		const json = await request.json();
 		const parsed = postSchema.safeParse(json);
-		if (!parsed.success) return notOk(parsed.error.message, 400);
+		if (!parsed.success) {
+			return notOk(parsed.error.issues[0]?.message ?? "Invalid inputs!", 400);
+		}
 		data = parsed.data;
 	} catch (error) {
 		console.error(error);

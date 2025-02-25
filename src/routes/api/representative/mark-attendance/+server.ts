@@ -24,7 +24,9 @@ export async function POST({ request, locals }) {
 	try {
 		const json = await request.json();
 		const parsed = postSchema.safeParse(json);
-		if (!parsed.success) return notOk(parsed.error.message, 400);
+		if (!parsed.success) {
+			return notOk(parsed.error.issues[0]?.message ?? "Invalid inputs!", 400);
+		}
 		data = parsed.data;
 	} catch (error) {
 		console.error(error);
@@ -87,7 +89,9 @@ export async function PATCH({ request, locals }) {
 	try {
 		const json = await request.json();
 		const parsed = patchSchema.safeParse(json);
-		if (!parsed.success) return notOk(parsed.error.message, 400);
+		if (!parsed.success) {
+			return notOk(parsed.error.issues[0]?.message ?? "Invalid inputs!", 400);
+		}
 		data = parsed.data;
 	} catch (error) {
 		console.error(error);
@@ -167,7 +171,9 @@ const deleteSchema = z.object({
 export async function DELETE({ request }) {
 	const { searchParams } = new URL(request.url);
 	const parsed = deleteSchema.safeParse(Object.fromEntries(searchParams));
-	if (!parsed.success) return notOk(parsed.error.message, 400);
+	if (!parsed.success) {
+		return notOk(parsed.error.issues[0]?.message ?? "Invalid inputs!", 400);
+	}
 
 	const { subjectId, periodId } = parsed.data;
 

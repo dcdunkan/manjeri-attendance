@@ -20,7 +20,7 @@
 		return student.fullName.toLowerCase().includes(filterString.toLowerCase());
 	}
 	function comparatorFn(a: EnrolledStudent, b: EnrolledStudent): number {
-		const positioning = b.absentCount - a.absentCount; /// TODO: verify
+		const positioning = b.absentCount - a.absentCount;
 		const multiplier =
 			sortDirs[attendanceSort] === "ascending"
 				? 1

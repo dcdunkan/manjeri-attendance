@@ -52,7 +52,7 @@
 		password: "",
 		confirm: "",
 	});
-	const passwdStrSchema = z.string().trim().min(6, "Too weak").max(128, "Too strong");
+	const passwdStrSchema = z.string().min(6, "Too weak").max(128, "Too strong");
 	const passwordSchema = z
 		.object<Record<PasswordKey, z.ZodString>>({
 			current: passwdStrSchema,

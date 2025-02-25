@@ -41,11 +41,6 @@
 			<div class="space-y-4">
 				<h2 class="font-serif text-2xl font-medium italic">Students</h2>
 
-				<!-- <p> TODO:
-				Subjects assigned to the batch are listed below. Click to see the list of students enrolled
-				to each subjects, representatives and overall attendance statistics for the subject.
-			</p> -->
-
 				<div class="space-y-2">
 					{#snippet menuitem(props: { href: string; icon: typeof Icon; title: string })}
 						<a

@@ -17,8 +17,7 @@ export async function GET({ request, locals }) {
 	const { searchParams } = new URL(request.url);
 	const parsed = getSchema.safeParse(Object.fromEntries(searchParams.entries()));
 	if (!parsed.success) {
-		console.error(parsed.error);
-		return notOk(parsed.error.message, 400);
+		return notOk(parsed.error.issues[0]?.message ?? "Invalid inputs!", 400);
 	}
 	const result = await getAbsentPeriods(parsed.data.student, parsed.data.subject);
 	return ok<Data.SubjectAbsentPeriods>(result);

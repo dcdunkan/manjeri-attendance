@@ -1,10 +1,9 @@
 <script lang="ts" module>
 	import { z } from "zod";
 
-	// TODO: trim the inputs.
 	export const formSchema = z.object({
-		userId: z.string().min(2).max(50),
-		password: z.string().min(6).max(256),
+		userId: z.string().trim().min(2).max(50),
+		password: z.string().min(6).max(128),
 	});
 
 	export type FormSchema = typeof formSchema;
@@ -16,13 +15,18 @@
 	import * as Form from "$lib/components/ui/form";
 	import { type SuperValidated, type Infer, superForm } from "sveltekit-superforms";
 	import { zodClient } from "sveltekit-superforms/adapters";
+	import { toast } from "svelte-sonner";
+	import { LoaderCircleIcon } from "lucide-svelte";
 
 	let { data }: { data: SuperValidated<Infer<FormSchema>> } = $props();
 
 	const form = superForm(data, {
 		validators: zodClient(formSchema),
+		onError(event) {
+			toast.error(event.result.error.message);
+		},
 	});
-	const { form: formData, enhance } = form;
+	const { form: formData, enhance, submitting } = form;
 </script>
 
 <Card.Root class="mx-auto max-w-sm">
@@ -36,7 +40,7 @@
 				<Form.Control>
 					{#snippet children({ props })}
 						<Form.Label>Your ID</Form.Label>
-						<Input {...props} bind:value={$formData.userId} autocomplete="off" />
+						<Input {...props} bind:value={$formData.userId} autocomplete="email" />
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
@@ -49,6 +53,7 @@
 						<Input
 							{...props}
 							type="password"
+							id="password"
 							autocomplete="new-password"
 							bind:value={$formData.password}
 							class="font-bold tracking-widest"
@@ -58,7 +63,13 @@
 				<Form.FieldErrors />
 			</Form.Field>
 
-			<Form.Button>Login</Form.Button>
+			<Form.Button disabled={$submitting}>
+				{#if $submitting}
+					<LoaderCircleIcon class="animate-spin" /> Logging in...
+				{:else}
+					Login
+				{/if}
+			</Form.Button>
 		</form>
 
 		<div class="mt-4 text-center text-sm">
