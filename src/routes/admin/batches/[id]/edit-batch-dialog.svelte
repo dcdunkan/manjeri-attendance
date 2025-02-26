@@ -3,6 +3,7 @@
 	import * as Dialog from "$lib/components/ui/dialog";
 	import { Input } from "$lib/components/ui/input";
 	import { Label } from "$lib/components/ui/label";
+	import type { getBatchWithSubjects } from "$lib/server/db/batches";
 	import type { getSubject } from "$lib/server/db/subjects";
 	import type { Result, Payload } from "$lib/types";
 	import { LoaderCircleIcon } from "lucide-svelte";
@@ -12,13 +13,13 @@
 
 	let {
 		open = $bindable(false),
-		subject = $bindable(),
+		batch = $bindable(),
 	}: {
 		open: boolean;
-		subject: Awaited<ReturnType<typeof getSubject>>;
+		batch: NonNullable<Awaited<ReturnType<typeof getBatchWithSubjects>>>;
 	} = $props();
 
-	let subjectNameInput = $state(subject.name);
+	let batchNameInput = $state(batch.name);
 	let isUpdating = $state(false);
 
 	const validName = z
@@ -27,13 +28,14 @@
 			required_error: "A name is required",
 		})
 		.trim()
+		.nonempty("A name is required")
 		.min(3, "Name is too short")
-		.max(128, "Name is too long")
-		.refine((str) => str !== subject.name, {
-			message: "New subject name can't be the same!",
+		.max(32, "Name is too long")
+		.refine((str) => str !== batch.name, {
+			message: "New batch name can't be the same!",
 		});
 
-	let parsedInput = $derived.by(() => validName.safeParse(subjectNameInput));
+	let parsedInput = $derived.by(() => validName.safeParse(batchNameInput));
 
 	let message = $derived(
 		parsedInput.success
@@ -43,24 +45,23 @@
 				: parsedInput.error.issues[0].message,
 	);
 
-	async function changeSubjectName() {
+	async function changeBatchName() {
 		isUpdating = true;
 
-		const parsed = validName.safeParse(subjectNameInput);
+		const parsed = validName.safeParse(batchNameInput);
 		if (!parsed.success) return toast.error("Invalid name!");
 
-		const response = await fetch("/api/admin/subjects/update-name", {
+		const response = await fetch("/api/admin/batch/name", {
 			method: "PATCH",
 			body: JSON.stringify({
-				subjectId: subject.id,
-				batchId: subject.batch.id,
+				batchId: batch.id,
 				name: parsed.data,
-			} satisfies Payload.UpdateSubjectName),
+			} satisfies Payload.UpdateBatchName),
 			headers: { "Content-Type": "application/json" },
 		});
 		if (!response.ok && response.status !== 400) {
 			isUpdating = false;
-			toast.error("Failed to update subject name.");
+			toast.error("Failed to update batch name.");
 			return;
 		}
 		const result: Result = await response.json();
@@ -72,30 +73,30 @@
 
 		isUpdating = false;
 		open = false;
-		subject.name = parsed.data;
-		toast.success("Subject name was changed");
+		batch.name = parsed.data;
+		toast.success("Batch name was changed");
 	}
 </script>
 
 <Dialog.Root bind:open>
 	<Dialog.Content>
 		<Dialog.Header>
-			<Dialog.Title>Edit subject</Dialog.Title>
-			<Dialog.Description>{subject.name}</Dialog.Description>
+			<Dialog.Title>Edit batch name</Dialog.Title>
+			<Dialog.Description>{batch.name}</Dialog.Description>
 		</Dialog.Header>
 
 		<div class="space-y-2">
-			<Label for="name">Subject name</Label>
+			<Label for="name">Batch name</Label>
 			<Input
 				id="name"
 				type="text"
 				required
-				placeholder={`Name for "${subject.name}"`}
-				bind:value={subjectNameInput}
+				placeholder={`New name for "${batch.name}"`}
+				bind:value={batchNameInput}
 				onkeypress={async (e) => {
 					if (e.key === "Enter") {
 						e.preventDefault();
-						await changeSubjectName();
+						await changeBatchName();
 					}
 				}}
 			/>
@@ -106,7 +107,7 @@
 
 		<Dialog.Footer class="gap-y-2">
 			<Button variant="secondary" onclick={() => (open = false)}>Close</Button>
-			<Button disabled={isUpdating || !parsedInput.success} onclick={changeSubjectName}>
+			<Button disabled={isUpdating || !parsedInput.success} onclick={changeBatchName}>
 				{#if isUpdating}
 					<LoaderCircleIcon class="animate-spin" /> Changing...
 				{:else}

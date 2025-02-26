@@ -26,7 +26,7 @@
 	<Button variant="outline"><EditIcon /> Edit</Button>
 </div>
 
-<h2 class="font-serif text-2xl italic">Basic Information</h2>
+<h2 class="text-xl">Basic Information</h2>
 
 <Table.Root>
 	<Table.Body>
@@ -70,58 +70,53 @@
 	</Table.Body>
 </Table.Root>
 
-<h2 class="font-serif text-2xl italic">
-	Enrolled Subjects <span class="text-muted-foreground">({student.enrollments.length})</span>
-</h2>
-<p>
-	Subjects enrolled by the student are shown below. Click on a subject name to see more information
-	about them. Edit the student to enroll more subjects or leave the exising ones.
-</p>
+<div class="space-y-2">
+	<h2 class="text-xl">Enrolled Subjects ({student.enrollments.length})</h2>
+</div>
 
 {#if student.enrollments.length > 0}
-	<Table.Root>
-		<Table.Header>
-			<Table.Row>
-				<Table.Head>#</Table.Head>
-				<Table.Head>Name</Table.Head>
-				<Table.Head class="text-center">Represents</Table.Head>
-				<Table.Head class="text-center">Attendance</Table.Head>
-				<Table.Head class="text-center">%</Table.Head>
-			</Table.Row>
-		</Table.Header>
-		<Table.Body>
-			{#each student.enrollments as enrollment, i}
-				{@const classes = enrollment.subject.periodCount}
-				{@const attended = enrollment.subject.periodCount - enrollment.subject.asbentCount}
+	<div class="space-y-2">
+		<Table.Root>
+			<Table.Header>
 				<Table.Row>
-					<Table.Cell class="text-muted-foreground">{i + 1}</Table.Cell>
-					<Table.Cell>{enrollment.subject.name}</Table.Cell>
-					<Table.Cell class="text-center"
-						>{#if isRepresentative(enrollment.subject.id)}
-							<CheckIcon class="inline-block size-4" />
-						{:else}
-							<MinusIcon class="inline-block size-4" />
-						{/if}
-					</Table.Cell>
-					<Table.Cell class="text-center">{attended} / {classes}</Table.Cell>
-					<Table.Cell class="text-center">
-						{cutePercent(safeDivision(attended, classes) * 100)} %
-					</Table.Cell>
+					<Table.Head>#</Table.Head>
+					<Table.Head>Name</Table.Head>
+					<Table.Head class="text-center">Attendance</Table.Head>
+					<Table.Head class="text-center">%</Table.Head>
 				</Table.Row>
-			{/each}
-		</Table.Body>
-	</Table.Root>
+			</Table.Header>
+			<Table.Body>
+				{#each student.enrollments as enrollment, i}
+					{@const classes = enrollment.subject.periodCount}
+					{@const attended = enrollment.subject.periodCount - enrollment.subject.asbentCount}
+					<Table.Row>
+						<Table.Cell class="text-muted-foreground">{i + 1}</Table.Cell>
+						<Table.Cell>
+							{enrollment.subject.name}
+							{#if isRepresentative(enrollment.subject.id)}
+								<CheckIcon class="inline-block size-4 text-yellow-500" />
+							{/if}
+						</Table.Cell>
+						<Table.Cell class="text-center">{attended} / {classes}</Table.Cell>
+						<Table.Cell class="text-center">
+							{cutePercent(safeDivision(attended, classes) * 100)} %
+						</Table.Cell>
+					</Table.Row>
+				{/each}
+			</Table.Body>
+		</Table.Root>
+
+		<div class="flex place-items-center justify-center gap-2 text-xs text-muted-foreground">
+			<CheckIcon class="size-4 text-yellow-500" /> Representative for the subject.
+		</div>
+	</div>
 {:else}
 	<EmptyInfobox>
 		<p>The student hasn't been enrolled to any subjects yet.</p>
-		<p>Edit the student to enroll to subjects available to the batch.</p>
 	</EmptyInfobox>
 {/if}
 
 <p class="text-sm leading-relaxed text-muted-foreground">
-	Subjects where the student represents the batch are marked by a <CheckIcon
-		class="inline-block size-4"
-	/>. Being a representative makes them able to update batchmates' attendance for the corresponding
-	subject. You can select a subject and promote or demote students to the
-	<span class="font-semibold">representative</span> role there.
+	You can go to a specific subject page and enroll and delist the student. You can also promote or
+	demote the student from the same page to make them represent the batch for the subject.
 </p>

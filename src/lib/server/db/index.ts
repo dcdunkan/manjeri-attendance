@@ -14,6 +14,7 @@ export const db = drizzle({ client: neonClient, casing: "snake_case", schema: sc
 // Setup the administrator account:
 (async () => {
 	console.log("Setting up administrator account...");
+
 	const admins = await db.query.accounts.findMany({
 		where: () => eq(schema.accounts.role, "administrator"),
 	});

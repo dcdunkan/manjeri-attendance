@@ -18,6 +18,16 @@ export namespace Payload {
 		action: "promote" | "demote";
 	}
 
+	export interface AddBatchSubject {
+		batchId: number;
+		name: string;
+	}
+
+	export interface UpdateBatchName {
+		batchId: number;
+		name: string;
+	}
+
 	export interface UpdateSubjectName {
 		subjectId: number;
 		batchId: number;

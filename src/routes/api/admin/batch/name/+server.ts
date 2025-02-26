@@ -1,19 +1,20 @@
 import { notOk, ok } from "$lib/responses";
 import { db } from "$lib/server/db/index";
 import * as schema from "$lib/server/db/schema";
-import { and, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 const patchSchema = z.object({
-	subjectId: z.coerce.number().positive(),
 	batchId: z.coerce.number().positive(),
 	name: z
 		.string({
 			invalid_type_error: "Invalid name input",
 			required_error: "A name is required",
 		})
+		.trim()
+		.nonempty("A name is required")
 		.min(3, "Name is too short")
-		.max(128, "Name is too long"),
+		.max(32, "Name is too long"),
 });
 
 export async function PATCH({ request, locals }) {
@@ -37,27 +38,25 @@ export async function PATCH({ request, locals }) {
 	}
 
 	try {
-		const subjects = await db.query.subjects.findMany({
+		const batches = await db.query.batches.findMany({
 			columns: { id: true, name: true },
-			where: () => eq(schema.subjects.batchId, data.batchId),
+			where: () => eq(schema.batches.id, data.batchId),
 		});
 
-		if (subjects.every((subject) => subject.id !== data.subjectId)) {
-			return notOk("Subject not found", 400);
+		if (batches.every((batch) => batch.id !== data.batchId)) {
+			return notOk("Batch not found", 400);
 		}
 
 		const loweredName = data.name.toLowerCase();
-		if (subjects.some((subject) => subject.name.toLowerCase() === loweredName)) {
-			return notOk("Subject with the same name exists!", 400);
+		if (batches.some((batch) => batch.name.toLowerCase() === loweredName)) {
+			return notOk("New batch name can't be the same!", 400);
 		}
 
 		await db
-			.update(schema.subjects)
+			.update(schema.batches)
 			.set({ name: data.name })
-			.where(
-				and(eq(schema.subjects.batchId, data.batchId), eq(schema.subjects.id, data.subjectId)),
-			);
-		return ok({ message: "Successfully changed the subject name" });
+			.where(eq(schema.batches.id, data.batchId));
+		return ok({ message: "Successfully changed the batch name" });
 	} catch (error) {
 		console.error(error);
 		return notOk("Couldn't update the subject name.", 500);

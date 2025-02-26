@@ -88,8 +88,6 @@ const config: Config = {
 			},
 			fontFamily: {
 				sans: ["FixelVariable", ...fontFamily.sans],
-				mono: [...fontFamily.mono],
-				serif: ['"EB Garamond"', ...fontFamily.serif],
 			},
 			keyframes: {
 				"accordion-down": {

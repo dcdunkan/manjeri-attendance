@@ -7,13 +7,14 @@ they currently do not have a digital attendance system.
 
 ====== DEVELOPMENT NOTES
 
-> Roadmap (23/27)
+> Roadmap (25/28)
 
 [x] Authorization
     [x] Login & logout
-[ ] Batches
+[x] Batches
     [x] Create batch
-    [ ] Edit batch
+    [x] Edit batch name
+    [x] Add subjects
     [x] Destroy batch
 [ ] Students
     [x] Register batch student
