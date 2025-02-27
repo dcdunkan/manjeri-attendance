@@ -41,6 +41,6 @@ export async function DELETE({ request, locals }) {
 		return ok(true);
 	} catch (error) {
 		console.error(error);
-		return notOk("Couldn't delist the student.", 500);
+		return notOk("Couldn't delete the batch.", 500);
 	}
 }

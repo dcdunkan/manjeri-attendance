@@ -11,7 +11,7 @@ BATCH NAME = BATCH YEAR
 This was a mistake made, try to interpret these two.
 This warning will be removed once this is resolved internally.
 
-> Roadmap (26/28)
+> Roadmap (27/28)
 
 [x] Authorization
     [x] Login & logout
@@ -20,11 +20,11 @@ This warning will be removed once this is resolved internally.
     [x] Edit batch name (To be removed)
     [x] Add subjects
     [x] Destroy batch
-[ ] Students
+[x] Students
     [x] Register batch student
     [x] Edit student
-    [ ] Delete student from batch
-[ ] Subjects
+    [x] Delete student from batch
+[x] Subjects
     [x] Edit subject details
     [x] Delist students
     [x] Destroy subject

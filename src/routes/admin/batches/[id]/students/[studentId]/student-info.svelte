@@ -2,10 +2,11 @@
 	import type { getStudent } from "$lib/server/db/students";
 	import * as Table from "$lib/components/ui/table";
 	import { Button } from "$lib/components/ui/button";
-	import { CheckIcon, EditIcon } from "lucide-svelte";
+	import { CheckIcon, EditIcon, Trash2Icon } from "lucide-svelte";
 	import EmptyInfobox from "$lib/components/empty-infobox.svelte";
 	import { cutePercent, safeDivision } from "$lib/helpers";
 	import EditStudentDialog from "./edit-student-dialog.svelte";
+	import DeleteStudentDialog from "./delete-student-dialog.svelte";
 
 	interface Props {
 		student: NonNullable<Awaited<ReturnType<typeof getStudent>>>;
@@ -22,16 +23,23 @@
 	}
 
 	let showEditStudentDialog = $state(false);
+	let showDeleteStudentDialog = $state(false);
 </script>
 
 <div class="flex items-center justify-between">
 	<h1 class="text-2xl font-medium">{student.fullName}</h1>
-	<Button variant="outline" onclick={() => (showEditStudentDialog = true)}>
-		<EditIcon /> Edit
-	</Button>
+	<div>
+		<Button variant="secondary" size="icon" onclick={() => (showEditStudentDialog = true)}>
+			<EditIcon />
+		</Button>
+		<Button variant="destructive" size="icon" onclick={() => (showDeleteStudentDialog = true)}>
+			<Trash2Icon />
+		</Button>
+	</div>
 </div>
 
 <EditStudentDialog bind:open={showEditStudentDialog} bind:student />
+<DeleteStudentDialog bind:open={showDeleteStudentDialog} {student} />
 
 <h2 class="text-xl">Basic Information</h2>
 
