@@ -158,7 +158,6 @@
 					batchId: subject.batch.id,
 					absentCount: subject.periodCount,
 					fullName: student.fullName,
-					isRep: false,
 					rollNumber: student.rollNumber,
 				},
 			};

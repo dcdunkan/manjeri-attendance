@@ -75,7 +75,6 @@ export const actions: Actions = {
 					batchId: batchId,
 					fullName: form.data.name,
 					rollNumber: form.data.rollNumber,
-					isRep: false,
 				})
 				.returning({ id: tables.students.id });
 
