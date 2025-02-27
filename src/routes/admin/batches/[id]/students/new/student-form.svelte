@@ -22,7 +22,9 @@
 	import type { getBatchWithSubjects } from "$lib/server/db/batches";
 	import { Label } from "$lib/components/ui/label";
 	import { Checkbox } from "$lib/components/ui/checkbox";
-	import { LoaderCircleIcon, UserPlusIcon } from "lucide-svelte";
+	import { LoaderCircleIcon, LockIcon, UnlockIcon, UserPlusIcon } from "lucide-svelte";
+	import { generateLoginId } from "$lib/helpers";
+	import Button from "$lib/components/ui/button/button.svelte";
 
 	let {
 		form: baseForm,
@@ -43,7 +45,7 @@
 	});
 	const { form: formData, enhance, submitting } = form;
 
-	const generatedLoginId = generateLoginId(batch);
+	const generatedLoginId = generateLoginId($formData.rollNumber, batch.name);
 	let hasGenerated = $state<boolean>(generatedLoginId != null);
 	if (generatedLoginId != null) {
 		formData.update(
@@ -66,12 +68,6 @@
 
 	let manualPassword = $state(false);
 
-	function generateLoginId({ name: batchName }: typeof batch) {
-		if (isNaN($formData.rollNumber) || $formData.rollNumber < 1) return;
-		const paddedRollNumber = $formData.rollNumber.toString().padStart(3, "0");
-		return `${batchName}${paddedRollNumber}`;
-	}
-
 	function selectSubject(subjectId: number) {
 		if (!$formData.enrolledSubjects.includes(subjectId)) {
 			$formData.enrolledSubjects = [...$formData.enrolledSubjects, subjectId];
@@ -87,7 +83,7 @@
 	}
 
 	function onRollNumberChange() {
-		const generated = generateLoginId(batch);
+		const generated = generateLoginId($formData.rollNumber, batch.name);
 		hasGenerated = generated != null;
 
 		if (generated != null) {
@@ -122,8 +118,7 @@
 							bind:value={$formData.rollNumber}
 							placeholder="Serial roll number"
 							min={1}
-							onchange={onRollNumberChange}
-							onkeyup={onRollNumberChange}
+							oninput={onRollNumberChange}
 						/>
 					{/snippet}
 				</Form.Control>
@@ -132,44 +127,44 @@
 		</div>
 	</div>
 
-	<Form.Field {form} name="loginId">
-		<Form.Control>
-			{#snippet children({ props })}
-				<Form.Label class="text-base">Login ID</Form.Label>
-				<Input
-					{...props}
-					type="text"
-					class="font-mono"
-					bind:value={$formData.loginId}
-					disabled
-					placeholder="Login ID"
-				/>
-			{/snippet}
-		</Form.Control>
-		<Form.FieldErrors />
-	</Form.Field>
-
 	<Form.Field {form} name="password">
 		<Form.Control>
 			{#snippet children({ props })}
 				<Form.Label class="text-base">Password</Form.Label>
-				<Input
-					{...props}
-					type="text"
-					bind:value={$formData.password}
-					class="font-mono"
-					placeholder="Account password"
-					onkeyup={() => (manualPassword = true)}
-				/>
+				<div class="flex place-items-center gap-2">
+					<Input
+						{...props}
+						type="text"
+						bind:value={$formData.password}
+						class="font-mono"
+						placeholder="Account password"
+						onkeydown={() => (manualPassword = true)}
+					/>
+					<Button
+						class="aspect-square"
+						variant={manualPassword ? "secondary" : "outline"}
+						onclick={() => {
+							manualPassword = !manualPassword;
+							if (manualPassword) return;
+							else onRollNumberChange();
+						}}
+					>
+						{#if manualPassword}
+							<UnlockIcon />
+						{:else}
+							<LockIcon />
+						{/if}
+					</Button>
+				</div>
 			{/snippet}
 		</Form.Control>
 		<Form.FieldErrors />
 
 		<div class="text-sm text-muted-foreground">
-			{#if hasGenerated == null}
-				Invalid roll number. Can't generate proper login ID.
+			{#if hasGenerated}
+				The user can login with the login ID <code>{$formData.loginId}</code>.
 			{:else}
-				The user can login with the login ID <code>{generatedLoginId}</code>.
+				Invalid roll number. Can't generate proper login ID.
 			{/if}
 		</div>
 	</Form.Field>

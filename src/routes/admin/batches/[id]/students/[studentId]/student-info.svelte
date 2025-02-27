@@ -2,9 +2,10 @@
 	import type { getStudent } from "$lib/server/db/students";
 	import * as Table from "$lib/components/ui/table";
 	import { Button } from "$lib/components/ui/button";
-	import { CheckIcon, EditIcon, MinusIcon } from "lucide-svelte";
+	import { CheckIcon, EditIcon } from "lucide-svelte";
 	import EmptyInfobox from "$lib/components/empty-infobox.svelte";
 	import { cutePercent, safeDivision } from "$lib/helpers";
+	import EditStudentDialog from "./edit-student-dialog.svelte";
 
 	interface Props {
 		student: NonNullable<Awaited<ReturnType<typeof getStudent>>>;
@@ -19,12 +20,18 @@
 	function isRepresentative(subjectId: number) {
 		return student.representations.some((repr) => repr.subjectId === subjectId);
 	}
+
+	let showEditStudentDialog = $state(false);
 </script>
 
 <div class="flex items-center justify-between">
 	<h1 class="text-2xl font-medium">{student.fullName}</h1>
-	<Button variant="outline"><EditIcon /> Edit</Button>
+	<Button variant="outline" onclick={() => (showEditStudentDialog = true)}>
+		<EditIcon /> Edit
+	</Button>
 </div>
+
+<EditStudentDialog bind:open={showEditStudentDialog} bind:student />
 
 <h2 class="text-xl">Basic Information</h2>
 

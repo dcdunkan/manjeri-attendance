@@ -57,3 +57,9 @@ export function isPast(a: Date | BaseDate, b: Date | BaseDate) {
 					: false
 			: false;
 }
+
+export function generateLoginId(rollNumber: number, batchYear: string) {
+	if (isNaN(rollNumber) || rollNumber < 1) return;
+	const paddedRollNumber = rollNumber.toString().padStart(3, "0");
+	return `${batchYear}${paddedRollNumber}`;
+}

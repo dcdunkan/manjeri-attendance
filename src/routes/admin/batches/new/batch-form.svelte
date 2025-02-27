@@ -2,7 +2,10 @@
 	import { z } from "zod";
 
 	export const formSchema = z.object({
-		name: z.string().trim().min(2).max(64),
+		name: z
+			.string()
+			.trim()
+			.refine((string) => /^[0-9]{4}$/.test(string), { message: "Should be a valid year" }),
 		subjects: z
 			.array(z.string().trim().min(2).max(64))
 			.min(1, "Batch must have at least one subject."),
@@ -55,21 +58,21 @@
 	<Form.Field {form} name="name">
 		<Form.Control>
 			{#snippet children({ props })}
-				<Form.Label class="text-base">Batch name</Form.Label>
-				<Input
-					{...props}
-					type="text"
-					bind:value={$formData.name}
-					placeholder="A unique, short and simple name for the batch"
-				/>
+				<Form.Label class="text-base">Batch year</Form.Label>
+				<Form.Description
+					>Must be unique and in the format <code>YYYY</code>.
+					<span class="text-error-foreground">
+						Once you create a batch, you won't be able to change the year.
+					</span></Form.Description
+				>
+				<Input {...props} type="text" bind:value={$formData.name} placeholder="YYYY e.g: 2024" />
 			{/snippet}
 		</Form.Control>
 		<Form.FieldErrors />
 	</Form.Field>
 
-	<!-- TODO: restrict spaces and special characters in batch name. -->
 	<Form.Fieldset {form} name="subjects" class="space-y-0">
-		<div class="mb-4">
+		<div class="mb-4 space-y-2">
 			<Form.Legend class="text-base">Subjects</Form.Legend>
 			<Form.Description>
 				Add the subjects you want to assign to the batch. Subject names must be distinct. At least

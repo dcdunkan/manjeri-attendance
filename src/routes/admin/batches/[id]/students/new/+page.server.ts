@@ -1,4 +1,4 @@
-import { fail, setError, superValidate } from "sveltekit-superforms";
+import { fail, superValidate } from "sveltekit-superforms";
 import { zod } from "sveltekit-superforms/adapters";
 import type { PageServerLoad, Actions } from "./$types";
 import { formSchema } from "./student-form.svelte";
@@ -9,6 +9,7 @@ import * as tables from "$lib/server/db/schema";
 import { redirect } from "@sveltejs/kit";
 import { and, eq } from "drizzle-orm";
 import { hashPassword } from "$lib/server/auth";
+import { generateLoginId } from "$lib/helpers";
 
 export const load: PageServerLoad = async (event) => {
 	const batchId = Number(event.params.id);
@@ -35,14 +36,25 @@ export const actions: Actions = {
 		let studentId: number;
 
 		try {
+			const batch = await db.query.batches.findFirst({
+				columns: { name: true },
+				where: () => eq(tables.batches.id, batchId),
+			});
+
+			if (batch == null) {
+				return error(404, { message: "Couldn't find the corresponding batch." });
+			}
+
+			const loginId = generateLoginId(form.data.rollNumber, batch.name);
+			if (loginId == null) {
+				return error(404, { message: "Couldn't generate a valid login ID" });
+			}
+
 			const queryCheck = await db.query.accounts.findFirst({
-				where: and(
-					eq(tables.accounts.login, form.data.loginId),
-					eq(tables.accounts.role, "student"),
-				),
+				where: and(eq(tables.accounts.login, loginId), eq(tables.accounts.role, "student")),
 			});
 			if (queryCheck != null) {
-				return setError(form, "loginId", "Student with the same login ID already exists.");
+				return error(404, { message: "Student with the same login ID already exists." });
 			}
 
 			const passwordHash = await hashPassword(form.data.password);
@@ -50,7 +62,7 @@ export const actions: Actions = {
 			const [account] = await db
 				.insert(tables.accounts)
 				.values({
-					login: form.data.loginId,
+					login: loginId,
 					role: "student",
 					passwordHash: passwordHash,
 				})

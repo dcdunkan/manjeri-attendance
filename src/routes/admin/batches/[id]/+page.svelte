@@ -128,16 +128,16 @@
 		<div class="flex place-items-center justify-between">
 			<h1 class="flex place-items-baseline gap-2 text-2xl">
 				Batch {batch.data.name}
-				<button onclick={() => (showEditBatchNameDialog = true)}>
+				<!-- <button onclick={() => (showEditBatchNameDialog = true)}>
 					<EditIcon class="size-4 text-muted-foreground" />
-				</button>
+				</button> -->
 			</h1>
 			<Button variant="destructive" onclick={() => (showDeleteBatchDialog = true)}>
 				<Trash2Icon />
 			</Button>
 		</div>
 
-		<EditBatchDialog bind:open={showEditBatchNameDialog} bind:batch={batch.data} />
+		<!-- <EditBatchDialog bind:open={showEditBatchNameDialog} bind:batch={batch.data} /> -->
 		<DeleteBatchDialog bind:open={showDeleteBatchDialog} batch={batch.data} />
 
 		<div class="flex place-items-center justify-center gap-10 rounded-lg border p-6">

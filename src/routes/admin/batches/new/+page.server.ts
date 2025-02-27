@@ -25,7 +25,7 @@ export const actions: Actions = {
 		try {
 			const query = await db.query.batches.findFirst({ where: eq(tables.batches.name, batchName) });
 			if (query != null) {
-				return setError(form, "name", "Batch with the name already exists.");
+				return setError(form, "name", "Batch with the same year already exists.");
 			}
 
 			const [batch] = await db.insert(tables.batches).values({ name: batchName }).returning();

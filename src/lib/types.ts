@@ -23,6 +23,13 @@ export namespace Payload {
 		name: string;
 	}
 
+	export interface UpdateStudentDetails {
+		batchId: number;
+		studentId: number;
+		fullName: string;
+		rollNumber: number;
+	}
+
 	export interface UpdateBatchName {
 		batchId: number;
 		name: string;
