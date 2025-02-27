@@ -7,6 +7,7 @@ import {
 	pgTable,
 	text,
 	timestamp,
+	unique,
 	uniqueIndex,
 } from "drizzle-orm/pg-core";
 
@@ -67,18 +68,20 @@ export const batchesRelations = relations(batches, ({ many }) => ({
 	subjects: many(subjects, { relationName: "batch_subjects" }),
 }));
 
-export const students = pgTable("students", {
-	id: integer("id")
-		.primaryKey()
-		.references(() => accounts.id, { onDelete: "cascade" }),
-	fullName: text("full_name").notNull(),
-	rollNumber: integer("roll_number").notNull(),
-	batchId: integer("batch_id")
-		.notNull()
-		.references(() => batches.id, { onDelete: "cascade" }),
-	// POSSIBLY REMOVE THIS? COUNT REPRESENTATIONS INSTEAD.
-	isRep: boolean("is_representative").default(false).notNull(),
-});
+export const students = pgTable(
+	"students",
+	{
+		id: integer("id")
+			.primaryKey()
+			.references(() => accounts.id, { onDelete: "cascade" }),
+		fullName: text("full_name").notNull(),
+		rollNumber: integer("roll_number").notNull(),
+		batchId: integer("batch_id")
+			.notNull()
+			.references(() => batches.id, { onDelete: "cascade" }),
+	},
+	(table) => [unique("unique_student_roll").on(table.batchId, table.rollNumber)],
+);
 
 export const studentsRelations = relations(students, ({ one, many }) => ({
 	// An account is linked with a single student. One-to-one.
@@ -101,13 +104,17 @@ export const studentsRelations = relations(students, ({ one, many }) => ({
 	representations: many(representatives, { relationName: "student_representations" }),
 }));
 
-export const subjects = pgTable("subjects", {
-	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-	name: text("name").notNull(),
-	batchId: integer("batch_id")
-		.notNull()
-		.references(() => batches.id, { onDelete: "cascade" }),
-});
+export const subjects = pgTable(
+	"subjects",
+	{
+		id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+		name: text("name").notNull(),
+		batchId: integer("batch_id")
+			.notNull()
+			.references(() => batches.id, { onDelete: "cascade" }),
+	},
+	(table) => [unique("batch_subject").on(table.batchId, table.name)],
+);
 
 export const subjectsRelations = relations(subjects, ({ one, many }) => ({
 	// can be linked to a single batch
@@ -123,15 +130,19 @@ export const subjectsRelations = relations(subjects, ({ one, many }) => ({
 	absents: many(absentees, { relationName: "subject_absents" }),
 }));
 
-export const enrollments = pgTable("enrollments", {
-	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-	subjectId: integer("subject_id")
-		.notNull()
-		.references(() => subjects.id, { onDelete: "cascade" }),
-	studentId: integer("student_id")
-		.notNull()
-		.references(() => students.id, { onDelete: "cascade" }),
-});
+export const enrollments = pgTable(
+	"enrollments",
+	{
+		id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+		subjectId: integer("subject_id")
+			.notNull()
+			.references(() => subjects.id, { onDelete: "cascade" }),
+		studentId: integer("student_id")
+			.notNull()
+			.references(() => students.id, { onDelete: "cascade" }),
+	},
+	(table) => [unique("enrollment").on(table.studentId, table.subjectId)],
+);
 
 export const enrollmentsRelations = relations(enrollments, ({ one }) => ({
 	// A student is enrolled to a single subject.
@@ -166,18 +177,22 @@ export const periodsRelations = relations(periods, ({ one, many }) => ({
 	absentees: many(absentees, { relationName: "period_absentees" }),
 }));
 
-export const absentees = pgTable("absentees", {
-	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-	studentId: integer("student_id")
-		.notNull()
-		.references(() => students.id, { onDelete: "cascade" }),
-	subjectId: integer("subject_id")
-		.notNull()
-		.references(() => subjects.id, { onDelete: "cascade" }),
-	periodId: integer("period_id")
-		.notNull()
-		.references(() => periods.id, { onDelete: "cascade" }),
-});
+export const absentees = pgTable(
+	"absentees",
+	{
+		id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+		studentId: integer("student_id")
+			.notNull()
+			.references(() => students.id, { onDelete: "cascade" }),
+		subjectId: integer("subject_id")
+			.notNull()
+			.references(() => subjects.id, { onDelete: "cascade" }),
+		periodId: integer("period_id")
+			.notNull()
+			.references(() => periods.id, { onDelete: "cascade" }),
+	},
+	(table) => [unique("absentee").on(table.periodId, table.studentId, table.subjectId)],
+);
 
 export const absenteesRelations = relations(absentees, ({ one }) => ({
 	// An absentee is a student and they are absent in a period.
@@ -198,15 +213,19 @@ export const absenteesRelations = relations(absentees, ({ one }) => ({
 	}),
 }));
 
-export const representatives = pgTable("representatives", {
-	id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-	subjectId: integer("subject_id")
-		.notNull()
-		.references(() => subjects.id, { onDelete: "cascade" }),
-	studentId: integer("student_id")
-		.notNull()
-		.references(() => students.id, { onDelete: "cascade" }),
-});
+export const representatives = pgTable(
+	"representatives",
+	{
+		id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+		subjectId: integer("subject_id")
+			.notNull()
+			.references(() => subjects.id, { onDelete: "cascade" }),
+		studentId: integer("student_id")
+			.notNull()
+			.references(() => students.id, { onDelete: "cascade" }),
+	},
+	(table) => [unique("representative").on(table.studentId, table.subjectId)],
+);
 
 export const representativesRelations = relations(representatives, ({ one }) => ({
 	// A representative is a student for one subject.
