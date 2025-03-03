@@ -50,13 +50,13 @@ This warning will be removed once this is resolved internally.
     [x] Modify password
     [x] Sessions and devices
 
-> Refinements to be considered (2/23):
+> Refinements to be considered (4/23):
 
 [ ] Take values from session (like studentId) instead of passing.
-[ ] block newly logged in devices from logging out other devices for 30 minutes.
+[x] block newly logged in devices from logging out other devices for 30 minutes (was changed to 24 hours)
 [ ] Recommend changing passwords in dashboard
 [ ] Limit sessions. Limit admin to 1. Limit student to ??
-[ ] Make sure lastActive renewal period is considerably enough.
+[x] Make sure lastActive renewal period is considerably enough.
 [ ] Change references of batch name to batch year everywhere.
 [ ] remove references of the internal IDs in UI
 [x] Lock mechanism in auto-generating passwords
@@ -70,8 +70,7 @@ This warning will be removed once this is resolved internally.
 [ ] use global stores for global data
 [ ] switch to data tables instead of normal tables
 [ ] extra verifications for auth in server routes
-[ ] verify if the attendance is marked/edited/deleted within
-    the allowed time period (last 7 days)
+[ ] verify if the attendance is marked/edited/deleted within the allowed time period (last 7 days)
 [ ] drizzle transactions / batch operations
 [ ] Make all the DB transactions abstractions & repositories
 [ ] Confirm whether form validations are enough
