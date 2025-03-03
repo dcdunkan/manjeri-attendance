@@ -5,4 +5,8 @@
 	let { data }: PageProps = $props();
 </script>
 
+<svelte:head>
+	<title>Login</title>
+</svelte:head>
+
 <LoginForm data={data.form} />
