@@ -1,6 +1,6 @@
+import { ACCOUNT_ROLES, DEVICE_TYPES } from "$lib/constants";
 import { relations } from "drizzle-orm";
 import {
-	boolean,
 	date,
 	integer,
 	pgEnum,
@@ -11,7 +11,8 @@ import {
 	uniqueIndex,
 } from "drizzle-orm/pg-core";
 
-export const accountRoleEnum = pgEnum("account_roles", ["administrator", "student"]);
+export const accountRoleEnum = pgEnum("account_roles", ACCOUNT_ROLES);
+export const sessionDeviceTypeEnum = pgEnum("device_types", DEVICE_TYPES);
 
 export type AccountRole = (typeof accountRoleEnum.enumValues)[number];
 
@@ -45,6 +46,11 @@ export const sessions = pgTable("sessions", {
 		.notNull()
 		.references(() => accounts.id, { onDelete: "cascade" }),
 	expiresAt: timestamp("expires_at", { mode: "date", withTimezone: true }).notNull(),
+	deviceInfo: text("device_info"),
+	deviceType: sessionDeviceTypeEnum("device_type").notNull().default("unknown"),
+	createdAt: timestamp("created_at", { mode: "date", withTimezone: true }).notNull().defaultNow(),
+	lastActive: timestamp("last_active", { mode: "date", withTimezone: true }).notNull().defaultNow(),
+	// signedOut: boolean("signed_out").default(false),
 });
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({

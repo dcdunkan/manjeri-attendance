@@ -14,6 +14,7 @@ import {
 	setSessionTokenCookie,
 } from "$lib/server/auth";
 import { routes } from "$lib/constants";
+import { getDeviceInfo } from "$lib/device-info";
 
 export const load: PageServerLoad = async () => {
 	return {
@@ -39,7 +40,8 @@ export const actions: Actions = {
 		if (!validPassword) return error(400, { message: "Incorrect username or password" });
 
 		const sessionToken = generateSessionToken();
-		const session = await createSession(sessionToken, account.id);
+		const deviceInfo = getDeviceInfo(event.request.headers.get("User-Agent") ?? "");
+		const session = await createSession(sessionToken, account.id, deviceInfo);
 		setSessionTokenCookie(event, sessionToken, session.expiresAt);
 
 		return redirect(302, role === "administrator" ? routes.administrator : routes.dashboard);

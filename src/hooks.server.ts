@@ -18,7 +18,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 		}
 	}
 
-	const { session, account } = await auth.validateSessionToken(sessionToken);
+	const userAgent = event.request.headers.get("User-Agent");
+	const { session, account } = await auth.validateSessionToken(sessionToken, userAgent);
 	if (session == null || account == null) {
 		auth.deleteSessionTokenCookie(event);
 		return redirect(303, routes.login);

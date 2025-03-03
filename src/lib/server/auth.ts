@@ -5,10 +5,12 @@ import { db } from "$lib/server/db";
 import { eq } from "drizzle-orm";
 import type { RequestEvent } from "@sveltejs/kit";
 import { Argon2id } from "oslo/password";
-
-const DAY_IN_MS = 1000 * 60 * 60 * 24;
-const EXPIRATION_PERIOD = 30 * DAY_IN_MS;
-const RENEW_PERIOD = 15 * DAY_IN_MS;
+import { getDeviceInfo, type DeviceInfo } from "$lib/device-info";
+import {
+	SESSION_EXPIRATION_PERIOD,
+	SESSION_RENEW_PERIOD,
+	SESSION_LAST_ACTIVE_UPDATE_FREEZE_PERIOD,
+} from "$lib/constants";
 
 const argon = new Argon2id();
 
@@ -28,12 +30,21 @@ export function generateSessionToken(): string {
 	return token;
 }
 
-export async function createSession(token: string, accountId: number): Promise<tables.Session> {
+export async function createSession(
+	token: string,
+	accountId: number,
+	deviceInfo: DeviceInfo,
+): Promise<tables.Session> {
 	const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
+	const now = new Date();
 	const session: tables.Session = {
 		id: sessionId,
 		accountId,
-		expiresAt: new Date(Date.now() + EXPIRATION_PERIOD),
+		expiresAt: new Date(now.getTime() + SESSION_EXPIRATION_PERIOD),
+		deviceInfo: deviceInfo.label,
+		deviceType: deviceInfo.type,
+		createdAt: now,
+		lastActive: now,
 	};
 	await db.insert(tables.sessions).values(session);
 	return session;
@@ -41,7 +52,10 @@ export async function createSession(token: string, accountId: number): Promise<t
 
 export type AccountRedacted = Omit<tables.Account, "passwordHash">;
 
-export async function validateSessionToken(token: string): Promise<{
+export async function validateSessionToken(
+	token: string,
+	userAgent: string | null,
+): Promise<{
 	session: tables.Session | null;
 	account: (AccountRedacted & { student: tables.Student }) | null;
 }> {
@@ -62,22 +76,41 @@ export async function validateSessionToken(token: string): Promise<{
 
 	const { account, ...session } = result;
 
-	const sessionExpired = Date.now() >= result.expiresAt.getTime();
+	const now = new Date();
+	const sessionExpired = now.getTime() >= result.expiresAt.getTime();
 	if (sessionExpired) {
 		await db.delete(tables.sessions).where(eq(tables.sessions.id, result.id));
 		return { session: null, account: null };
 	}
 
-	const renewSession = Date.now() >= session.expiresAt.getTime() - RENEW_PERIOD;
+	const deviceInfo = getDeviceInfo(userAgent);
+	const renewSession = now.getTime() >= session.expiresAt.getTime() - SESSION_RENEW_PERIOD;
+	const sinceLastActive = now.getTime() - session.lastActive.getTime();
+
+	const alwaysIncluded: Partial<tables.Session> = {
+		deviceType: deviceInfo.type,
+		deviceInfo: deviceInfo.label,
+		lastActive: now,
+	};
 	if (renewSession) {
-		session.expiresAt = new Date(Date.now() + EXPIRATION_PERIOD);
+		session.expiresAt = new Date(now.getTime() + SESSION_EXPIRATION_PERIOD);
 		await db
 			.update(tables.sessions)
-			.set({ expiresAt: session.expiresAt })
+			.set({ expiresAt: session.expiresAt, ...alwaysIncluded })
+			.where(eq(tables.sessions.id, session.id));
+	} else if (
+		sinceLastActive > SESSION_LAST_ACTIVE_UPDATE_FREEZE_PERIOD ||
+		deviceInfo.label !== session.deviceInfo ||
+		deviceInfo.type !== session.deviceType
+	) {
+		console.log("writing last active for", deviceInfo);
+		await db
+			.update(tables.sessions)
+			.set({ ...alwaysIncluded })
 			.where(eq(tables.sessions.id, session.id));
 	}
 
-	return { session: result, account };
+	return { session, account };
 }
 
 export type SessionValidationResult = Awaited<ReturnType<typeof validateSessionToken>>;

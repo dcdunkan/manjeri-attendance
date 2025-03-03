@@ -1,11 +1,19 @@
 <script lang="ts">
-	import type { getStudent } from "$lib/server/db/students";
-	import type { LoadedData, AwaitReturn, Payload, Result } from "$lib/types";
-	import { ArrowLeftIcon, KeyRoundIcon, LoaderCircleIcon, XCircleIcon } from "lucide-svelte";
+	import type { LoadedData, Payload, Result } from "$lib/types";
+	import {
+		AlertCircleIcon,
+		ArrowLeftIcon,
+		CircleHelpIcon,
+		KeyRoundIcon,
+		LaptopIcon,
+		LoaderCircleIcon,
+		SmartphoneIcon,
+		XCircleIcon,
+	} from "lucide-svelte";
 	import * as Table from "$lib/components/ui/table";
 	import { onMount } from "svelte";
-	import type { PageData } from "./$types";
-	import { pluralize } from "$lib/helpers";
+	import type { PageProps } from "./$types";
+	import { negateFn, pluralize, timeDistance } from "$lib/helpers";
 	import { Label } from "$lib/components/ui/label";
 	import PasswordInput from "./password-input.svelte";
 	import { Button, buttonVariants } from "$lib/components/ui/button";
@@ -13,16 +21,32 @@
 	import PasswordStrengthMeter from "./password-strength-meter.svelte";
 	import { z } from "zod";
 	import { toast } from "svelte-sonner";
+	import LoadingCard from "$lib/components/loading-card.svelte";
+	import LoadingFailedCard from "$lib/components/loading-failed-card.svelte";
+	import clsx from "clsx";
+	import EmptyInfobox from "$lib/components/empty-infobox.svelte";
+	import { SESSION_MODIFY_RESTRICTION_PERIOD } from "$lib/constants";
+	import LogoutDialog from "./logout-dialog.svelte";
+	import type { AccountSession } from "./types";
 
-	let { data }: { data: PageData } = $props();
+	let { data }: PageProps = $props();
 
-	type Details = NonNullable<AwaitReturn<typeof getStudent>>;
-
+	type Details = NonNullable<Awaited<typeof data.student>>;
 	let details = $state<LoadedData<Details>>({
 		state: "pending",
 		message: "Loading details...",
 	});
 	let isDefaultPassword = $state<LoadedData<boolean>>({ state: "pending", message: "" });
+	let sessions = $state<
+		LoadedData<{
+			currentSession: AccountSession;
+			otherSessions: AccountSession[];
+		}>
+	>({
+		state: "pending",
+		message: "Fetching sessions...",
+	});
+	const now = Date.now();
 
 	onMount(async () => {
 		try {
@@ -32,18 +56,56 @@
 			else details = { state: "resolved", data: result };
 
 			try {
-				const result = await data.isDefaultPassword;
-				if (result == null)
-					isDefaultPassword = { state: "failed", message: "Could not get password details" };
-				else isDefaultPassword = { state: "resolved", data: result };
+				const result = await data.sessions;
+				const currentSession = result.find(isCurrentSession);
+				if (currentSession == null) {
+					return window.location.assign("/logout");
+				}
+				sessions = {
+					state: "resolved",
+					data: {
+						currentSession: currentSession,
+						otherSessions: result.filter(negateFn(isCurrentSession)),
+					},
+				};
 			} catch (error) {
-				details = { state: "failed", message: "Could not get the student details" };
+				sessions = { state: "failed", message: "Could not get the session details" };
+			}
+
+			try {
+				isDefaultPassword = { state: "resolved", data: await data.isDefaultPassword };
+			} catch (error) {
+				isDefaultPassword = { state: "failed", message: "Could not get the password details" };
 			}
 		} catch (error) {
 			details = { state: "failed", message: "Could not get the student details" };
 		}
 	});
 
+	let canModifyOtherSessions = $derived.by(() => {
+		if (sessions.state !== "resolved") return false;
+		return (
+			now - sessions.data.currentSession.createdAt.getTime() > SESSION_MODIFY_RESTRICTION_PERIOD
+		);
+	});
+
+	// SESSIONS AND DEVICES SECTION
+	function isCurrentSession(session: AccountSession) {
+		return session.id === data.currentSessionId;
+	}
+
+	function sessionComparatorFn(a: AccountSession, b: AccountSession) {
+		if (isCurrentSession(a)) return -1;
+		return b.lastActive.getTime() - a.lastActive.getTime();
+	}
+
+	const formatter = new Intl.DateTimeFormat("en-IN", {
+		dateStyle: "medium",
+		timeStyle: "short",
+	});
+	let showLogoutDialog = $state(false);
+
+	// PASSWORD SECTION
 	let passwordSection: HTMLDivElement;
 	const PASSWORD_KEYS = ["current", "password", "confirm"] as const;
 	type PasswordKey = (typeof PASSWORD_KEYS)[number];
@@ -180,6 +242,109 @@
 	<!-- <div>
 	<div class="text-lg">Set display name</div>
 </div> -->
+
+	<div class="space-y-4">
+		<div class="text-xl">Sessions and Devices</div>
+
+		{#if sessions.state === "pending"}
+			<LoadingCard>{sessions.message}</LoadingCard>
+		{:else if sessions.state === "resolved"}
+			<div class="space-y-4">
+				{#if !canModifyOtherSessions && sessions.data.otherSessions.length > 0}
+					<div
+						class="flex gap-2 rounded border border-error-border bg-error px-3 py-2 text-error-foreground"
+					>
+						<div>
+							<AlertCircleIcon class="inline-block size-5" />
+						</div>
+						<div class="text-sm font-medium">
+							You have to wait {timeDistance(
+								now,
+								sessions.data.currentSession.createdAt.getTime() +
+									SESSION_MODIFY_RESTRICTION_PERIOD,
+							)} before you can log out the other sessions from this session as you logged in very recently.
+						</div>
+					</div>
+				{/if}
+
+				{#snippet sessionCard(session: AccountSession)}
+					{@const isCurrent = isCurrentSession(session)}
+
+					<div
+						class={clsx("flex gap-4 rounded border p-4", {
+							"border-primary/50 bg-secondary bg-opacity-50": isCurrent,
+						})}
+					>
+						<div class="aspect-square p-2">
+							{#if session.deviceType === "laptop"}
+								<LaptopIcon />
+							{:else if session.deviceType === "mobile"}
+								<SmartphoneIcon />
+							{:else}
+								<CircleHelpIcon />
+							{/if}
+						</div>
+						<div>
+							<div>{session.deviceInfo || "Unknown device"}</div>
+							<div class="text-sm">
+								{#if isCurrent}
+									<div class="italic text-warning-foreground">This device</div>
+								{:else}
+									Last active {timeDistance(now, session.lastActive.getTime())} ago
+								{/if}
+							</div>
+							<div class="mt-3 text-xs">
+								Logged in on
+								{formatter.format(session.createdAt)}
+							</div>
+							<div class="text-xs font-medium">
+								Expires in
+								{timeDistance(now, session.expiresAt.getTime())}
+							</div>
+						</div>
+
+						{#if !isCurrent && sessions.state === "resolved"}
+							<Button
+								onclick={() => (showLogoutDialog = true)}
+								disabled={!canModifyOtherSessions}
+								variant={canModifyOtherSessions ? "destructive" : "secondary"}
+								size="sm"
+								class="my-auto ml-auto"
+							>
+								Logout
+							</Button>
+							<LogoutDialog
+								bind:open={showLogoutDialog}
+								{session}
+								{canModifyOtherSessions}
+								bind:sessions={sessions.data.otherSessions}
+							/>
+						{/if}
+					</div>
+				{/snippet}
+
+				{@render sessionCard(sessions.data.currentSession)}
+
+				<div class="space-y-2">
+					<div class="text-sm uppercase">
+						Other sessions ({sessions.data.otherSessions.length})
+					</div>
+
+					{#each sessions.data.otherSessions.toSorted(sessionComparatorFn) as session}
+						{@render sessionCard(session)}
+					{:else}
+						<EmptyInfobox>You're not logged in anywhere else.</EmptyInfobox>
+					{/each}
+
+					<div class="text-sm text-muted-foreground">*Last active time is approximated.</div>
+				</div>
+			</div>
+		{:else if sessions.state === "failed"}
+			<LoadingFailedCard>{sessions.message}</LoadingFailedCard>
+		{:else}
+			<LoadingFailedCard>Unknown action.</LoadingFailedCard>
+		{/if}
+	</div>
 
 	<div bind:this={passwordSection} class="space-y-4">
 		<div class="text-xl">Change Password</div>

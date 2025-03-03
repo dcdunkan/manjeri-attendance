@@ -22,7 +22,7 @@
 		bind:value
 		type={showPassword ? "text" : "password"}
 		class={clsx("py-4 pr-10", {
-			"font-mono text-sm": showPassword || (!showPassword && value === ""),
+			"text-sm": showPassword || (!showPassword && value === ""),
 			"font-mono text-lg font-bold": !showPassword && value.length,
 		})}
 		{...restProps}

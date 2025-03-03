@@ -11,7 +11,7 @@ BATCH NAME = BATCH YEAR
 This was a mistake made, try to interpret these two.
 This warning will be removed once this is resolved internally.
 
-> Roadmap (27/28)
+> Roadmap (28/28)
 
 [x] Authorization
     [x] Login & logout
@@ -46,12 +46,17 @@ This warning will be removed once this is resolved internally.
     [x] Calendar wise view
     [x] Subject wise view
     [x] Show total in attendance view sections
-[ ] Account settings
+[x] Account settings
     [x] Modify password
-    [ ] Sessions and devices
+    [x] Sessions and devices
 
-> Refinements to be considered (2/18):
+> Refinements to be considered (2/23):
 
+[ ] Take values from session (like studentId) instead of passing.
+[ ] block newly logged in devices from logging out other devices for 30 minutes.
+[ ] Recommend changing passwords in dashboard
+[ ] Limit sessions. Limit admin to 1. Limit student to ??
+[ ] Make sure lastActive renewal period is considerably enough.
 [ ] Change references of batch name to batch year everywhere.
 [ ] remove references of the internal IDs in UI
 [x] Lock mechanism in auto-generating passwords

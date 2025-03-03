@@ -1,3 +1,21 @@
+export const ACCOUNT_ROLES = ["administrator", "student"] as const;
+export const DEVICE_TYPES = ["laptop", "mobile", "unknown"] as const;
+
+export const SECOND = 1 * 1000,
+	MINUTE = 60 * SECOND,
+	HOUR = 60 * MINUTE,
+	DAY = 24 * HOUR;
+
+// Expires the stored session, invalidating the login
+export const SESSION_EXPIRATION_PERIOD = 30 * DAY;
+// Renews the stored session, once it reaches this time period since the last renewal
+export const SESSION_RENEW_PERIOD = 15 * DAY;
+// `lastActive` is only updated if the time passed since the last lastActive.
+export const SESSION_LAST_ACTIVE_UPDATE_FREEZE_PERIOD = 3 * MINUTE;
+// You can't modify other sessions while you're logged in and right in this period
+export const SESSION_MODIFY_RESTRICTION_PERIOD = 24 * HOUR;
+
+// NOT ALL ROUTES ARE LISTED HERE.
 export const routes = {
 	login: "/login",
 	logout: "/logout",
