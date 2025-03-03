@@ -8,6 +8,8 @@ export const load: PageServerLoad = ({ locals }) => {
 	}
 
 	return {
+		title: "Attendance",
+		backwards: "/",
 		studentId: locals.account.student.id,
 		subjects: getEnrolledSubjects(locals.account.student.id),
 	};

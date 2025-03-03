@@ -1,5 +1,4 @@
 <script lang="ts">
-	import NavigationHeader from "$lib/components/navigation-header.svelte";
 	import type { PageData } from "./$types";
 	import LoadingFailedCard from "$lib/components/loading-failed-card.svelte";
 	import StudentInfo from "./student-info.svelte";
@@ -23,8 +22,6 @@
 		}
 	});
 </script>
-
-<NavigationHeader title="Student Details" />
 
 {#if student.state === "pending"}
 	<LoadingCard>{student.message}</LoadingCard>

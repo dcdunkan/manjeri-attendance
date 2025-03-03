@@ -1,9 +1,7 @@
 <script lang="ts">
-	import NavigationHeader from "$lib/components/navigation-header.svelte";
 	import {
 		ArrowRightIcon,
 		BookUserIcon,
-		EditIcon,
 		LoaderCircleIcon,
 		PlusIcon,
 		Trash2Icon,
@@ -17,15 +15,12 @@
 	import LoadingCard from "$lib/components/loading-card.svelte";
 	import LoadingFailedCard from "$lib/components/loading-failed-card.svelte";
 	import DeleteBatchDialog from "./delete-batch-dialog.svelte";
-	import EditBatchDialog from "./edit-batch-dialog.svelte";
 	import { Input } from "$lib/components/ui/input";
 	import { toast } from "svelte-sonner";
 	import { z } from "zod";
 	import { slide } from "svelte/transition";
 
 	let { data }: { data: PageData } = $props();
-
-	let pageTitle = $state<string>("Batch Details");
 
 	let batch = $state<LoadedData<Awaited<typeof data.batch>>>({
 		state: "pending",
@@ -41,7 +36,6 @@
 		}
 	});
 
-	let showEditBatchNameDialog = $state(false);
 	let showDeleteBatchDialog = $state(false);
 
 	let subjectInput = $state("");
@@ -117,8 +111,6 @@
 	}
 </script>
 
-<NavigationHeader title={pageTitle} />
-
 {#if batch.state === "pending"}
 	<LoadingCard>{batch.message}</LoadingCard>
 {:else if batch.state === "resolved"}
@@ -128,9 +120,6 @@
 		<div class="flex place-items-center justify-between">
 			<h1 class="flex place-items-baseline gap-2 text-2xl">
 				Batch {batch.data.name}
-				<!-- <button onclick={() => (showEditBatchNameDialog = true)}>
-					<EditIcon class="size-4 text-muted-foreground" />
-				</button> -->
 			</h1>
 			<Button variant="destructive" onclick={() => (showDeleteBatchDialog = true)}>
 				<Trash2Icon />

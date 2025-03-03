@@ -1,5 +1,4 @@
 <script lang="ts">
-	import NavigationHeader from "$lib/components/navigation-header.svelte";
 	import { Button } from "$lib/components/ui/button";
 	import { ListPlusIcon } from "lucide-svelte";
 	import EmptyInfobox from "$lib/components/empty-infobox.svelte";
@@ -25,8 +24,6 @@
 		}
 	});
 </script>
-
-<NavigationHeader title="Students" />
 
 <div class="flex place-items-center justify-between">
 	<div class="text-2xl">Students</div>

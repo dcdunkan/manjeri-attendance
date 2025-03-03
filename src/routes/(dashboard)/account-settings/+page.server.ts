@@ -13,6 +13,8 @@ export const load: PageServerLoad = ({ locals }) => {
 	}
 
 	return {
+		title: "Account Settings",
+		backwards: "/",
 		student: getStudent(locals.account.student.batchId, locals.account.student.id),
 		isDefaultPassword: isUnsafePasswordSaved(locals.account.id),
 		sessions: getSessions(locals.account.id),

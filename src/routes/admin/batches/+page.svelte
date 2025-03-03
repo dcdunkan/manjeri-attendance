@@ -1,5 +1,4 @@
 <script lang="ts">
-	import NavigationHeader from "$lib/components/navigation-header.svelte";
 	import { Button } from "$lib/components/ui/button";
 	import { ListPlusIcon } from "lucide-svelte";
 	import BatchTable from "./batch-table.svelte";
@@ -25,17 +24,9 @@
 	});
 </script>
 
-<NavigationHeader title="Batches" />
-
 <div class="flex place-items-center justify-between">
-	<div class="text-2xl font-medium">Registered batches</div>
-	<div class="flex gap-2">
-		<!-- TODO: <Button variant="outline" class="aspect-square"><ListRestartIcon /></Button> -->
-		<Button href="batches/new" variant="secondary"><ListPlusIcon /> Add batch</Button>
-	</div>
+	<p>Click one of the batches to manage students and subjects of the batch.</p>
 </div>
-
-<p>Click one of the batches to manage students and subjects of the batch.</p>
 
 {#if batches.state === "pending"}
 	<LoadingCard>
@@ -50,6 +41,8 @@
 			<p>Click "Add batch" to register a batch.</p>
 		</EmptyInfobox>
 	{/if}
+
+	<Button href="batches/new" class="w-full"><ListPlusIcon /> Add batch</Button>
 {:else if batches.state === "failed"}
 	<LoadingFailedCard>
 		{batches.message}

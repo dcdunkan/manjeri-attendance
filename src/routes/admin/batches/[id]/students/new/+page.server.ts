@@ -17,6 +17,8 @@ export const load: PageServerLoad = async (event) => {
 		return error(404, { message: "Not found" });
 	}
 	return {
+		title: "Register Student",
+		backwards: `/admin/batches/${batchId}/students`,
 		result: Promise.all([superValidate(zod(formSchema)), getBatchWithSubjects(batchId)]),
 	};
 };

@@ -1,5 +1,4 @@
 <script lang="ts">
-	import NavigationHeader from "$lib/components/navigation-header.svelte";
 	import {
 		EditIcon,
 		SquareUserRound,
@@ -53,8 +52,6 @@
 	let showSubjectEditDialog = $state(false);
 	let showDeleteDialog = $state(false);
 </script>
-
-<NavigationHeader title="Details" />
 
 {#if subject.state === "pending"}
 	<LoadingCard>

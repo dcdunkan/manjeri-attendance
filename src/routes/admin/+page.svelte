@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { LogOutIcon, UsersIcon } from "lucide-svelte";
 	import { type MenuItem, default as Menu } from "$lib/components/menu-items.svelte";
-	import NavigationHeader from "$lib/components/navigation-header.svelte";
 
 	const menuItems: MenuItem[] = [
 		{
@@ -19,8 +18,6 @@
 		},
 	];
 </script>
-
-<NavigationHeader title="Dashboard" />
 
 <div>
 	<div class="text-muted-foreground">You're logged in as the&mdash;</div>

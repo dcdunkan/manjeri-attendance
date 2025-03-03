@@ -1,7 +1,6 @@
 <script lang="ts">
-	import NavigationHeader from "$lib/components/navigation-header.svelte";
 	import Button from "$lib/components/ui/button/button.svelte";
-	import { CircleXIcon, LoaderCircleIcon, PlusIcon } from "lucide-svelte";
+	import { ArrowLeftIcon, CircleXIcon, LoaderCircleIcon, PlusIcon } from "lucide-svelte";
 	import type { PageData } from "./$types";
 	import { onMount } from "svelte";
 	import type { LoadedData, Keys } from "$lib/types";
@@ -70,10 +69,17 @@
 	});
 </script>
 
-<div class="flex h-screen flex-col space-y-6 pt-12">
-	<div class="flex-grow space-y-6 px-8">
-		<NavigationHeader title="Update Attendance" />
+<div class="sticky top-0 z-10 bg-background px-6 py-4">
+	<div class="flex place-items-center gap-3">
+		<a href=".." class="aspect-square p-1">
+			<ArrowLeftIcon class="size-4" />
+		</a>
+		<h1 class="text-lg">Update Attendance</h1>
+	</div>
+</div>
 
+<div class="flex h-screen flex-col space-y-6">
+	<div class="flex-grow space-y-6 px-8">
 		{#if subject.state === "pending"}
 			<LoadingCard>
 				<div>{subject.message}</div>

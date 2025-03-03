@@ -9,6 +9,8 @@ import { eq } from "drizzle-orm";
 
 export const load: PageServerLoad = async () => {
 	return {
+		title: "Register Batch",
+		backwards: "/admin/batches",
 		form: await superValidate(zod(formSchema)),
 	};
 };

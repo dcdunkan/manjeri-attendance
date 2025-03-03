@@ -9,5 +9,9 @@ export const load = async (event: Parameters<PageServerLoad>[0]) => {
 		return error(404, { message: "Not found" });
 	}
 
-	return { batch: getBatchWithSubjects(batchId) };
+	return {
+		title: "Batch Details",
+		backwards: "/admin/batches",
+		batch: getBatchWithSubjects(batchId),
+	};
 };

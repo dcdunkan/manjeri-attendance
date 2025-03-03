@@ -64,7 +64,7 @@ This warning will be removed once this is resolved internally.
 [ ] algorithm for display name
 [ ] track who & when attendance marked (attendance history schema)
 [x] figure out loading spinners in forms after submission.
-[ ] redo navigation bar
+[x] redo navigation bar
 [ ] redis integration
 [ ] add head-titles
 [ ] use global stores for global data

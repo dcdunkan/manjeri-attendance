@@ -1,5 +1,4 @@
 <script lang="ts">
-	import NavigationHeader from "$lib/components/navigation-header.svelte";
 	import StudentForm from "./student-form.svelte";
 	import type { PageData } from "./$types";
 	import type { LoadedData } from "$lib/types";
@@ -22,10 +21,6 @@
 		}
 	});
 </script>
-
-<NavigationHeader title="New Student" />
-
-<div class="text-2xl">Register Student</div>
 
 <p>Fill the details to register a new student to the batch.</p>
 

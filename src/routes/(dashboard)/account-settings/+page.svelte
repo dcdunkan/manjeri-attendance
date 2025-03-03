@@ -147,321 +147,309 @@
 	let isChangingPassword = $state(false);
 </script>
 
-<div class="sticky top-0 z-10 bg-background px-6 py-4">
-	<div class="flex place-items-center gap-3">
-		<a href="/" class="aspect-square p-1">
-			<ArrowLeftIcon class="size-4" />
-		</a>
-		<h1 class="text-lg">Account Settings</h1>
-	</div>
-</div>
-
-<div class="flex-grow space-y-6 p-8 pt-2">
-	{#if isDefaultPassword.state === "resolved" && isDefaultPassword.data === true}
-		<div
-			transition:slide
-			class="rounded border border-error-border bg-error p-4 text-sm text-error-foreground"
-		>
-			<div class="flex place-items-center gap-4">
-				<KeyRoundIcon />
-				<div class="space-y-0.5">
-					<div class="font-medium">Change your password</div>
-					<div>Password change is highly recommended!</div>
-				</div>
-				<button
-					onclick={() => {
-						if (passwordSection == null) return;
-						passwordSection.scrollIntoView({ behavior: "smooth", block: "center" });
-					}}
-					class={buttonVariants({ variant: "link", class: "ml-auto text-error-foreground" })}
-					>Change now</button
-				>
+{#if isDefaultPassword.state === "resolved" && isDefaultPassword.data === true}
+	<div
+		transition:slide
+		class="rounded border border-error-border bg-error p-4 text-sm text-error-foreground"
+	>
+		<div class="flex place-items-center gap-4">
+			<KeyRoundIcon />
+			<div class="space-y-0.5">
+				<div class="font-medium">Change your password</div>
+				<div>Password change is highly recommended!</div>
 			</div>
+			<button
+				onclick={() => {
+					if (passwordSection == null) return;
+					passwordSection.scrollIntoView({ behavior: "smooth", block: "center" });
+				}}
+				class={buttonVariants({ variant: "link", class: "ml-auto text-error-foreground" })}
+				>Change now</button
+			>
+		</div>
+	</div>
+{/if}
+
+<div class="space-y-2">
+	<div class="text-xl">Account Details</div>
+
+	{#if details.state === "pending"}
+		<div class="flex w-full flex-col items-center justify-center space-y-2 p-6">
+			<LoaderCircleIcon class="animate-spin" />
+			<div>{details.message}</div>
+		</div>
+	{:else if details.state === "resolved"}
+		<Table.Root>
+			<Table.Body>
+				<Table.Row>
+					<Table.Head>Roll number</Table.Head>
+					<Table.Cell>{details.data.rollNumber}</Table.Cell>
+				</Table.Row>
+				<Table.Row>
+					<Table.Head>Full name</Table.Head>
+					<Table.Cell>{details.data.fullName}</Table.Cell>
+				</Table.Row>
+				<Table.Row>
+					<Table.Head>ID</Table.Head>
+					<Table.Cell>{details.data.id}</Table.Cell>
+				</Table.Row>
+				<Table.Row>
+					<Table.Head>Login</Table.Head>
+					<Table.Cell>{details.data.account.login}</Table.Cell>
+				</Table.Row>
+				<Table.Row>
+					<Table.Head>Batch</Table.Head>
+					<Table.Cell>{details.data.batch.name}</Table.Cell>
+				</Table.Row>
+				<Table.Row>
+					<Table.Head>Enrolled in</Table.Head>
+					<Table.Cell>
+						{details.data.enrollments.length}
+						{pluralize(details.data.representations.length, "subject", "subjects")}
+					</Table.Cell>
+				</Table.Row>
+				<Table.Row>
+					<Table.Head>Represents</Table.Head>
+					<Table.Cell>
+						{details.data.representations.length}
+						{pluralize(details.data.representations.length, "subject", "subjects")}
+					</Table.Cell>
+				</Table.Row>
+			</Table.Body>
+		</Table.Root>
+	{:else if details.state === "failed"}
+		<div class="flex w-full flex-col items-center justify-center space-y-2 p-6">
+			<XCircleIcon />
+			<div>{details.message}</div>
+		</div>
+	{:else}
+		<div class="flex w-full flex-col items-center justify-center space-y-2 p-6">
+			<div>Unknown action.</div>
 		</div>
 	{/if}
+</div>
 
-	<div class="space-y-2">
-		<div class="text-xl">Account Details</div>
-
-		{#if details.state === "pending"}
-			<div class="flex w-full flex-col items-center justify-center space-y-2 p-6">
-				<LoaderCircleIcon class="animate-spin" />
-				<div>{details.message}</div>
-			</div>
-		{:else if details.state === "resolved"}
-			<Table.Root>
-				<Table.Body>
-					<Table.Row>
-						<Table.Head>Roll number</Table.Head>
-						<Table.Cell>{details.data.rollNumber}</Table.Cell>
-					</Table.Row>
-					<Table.Row>
-						<Table.Head>Full name</Table.Head>
-						<Table.Cell>{details.data.fullName}</Table.Cell>
-					</Table.Row>
-					<Table.Row>
-						<Table.Head>ID</Table.Head>
-						<Table.Cell>{details.data.id}</Table.Cell>
-					</Table.Row>
-					<Table.Row>
-						<Table.Head>Login</Table.Head>
-						<Table.Cell>{details.data.account.login}</Table.Cell>
-					</Table.Row>
-					<Table.Row>
-						<Table.Head>Batch</Table.Head>
-						<Table.Cell>{details.data.batch.name}</Table.Cell>
-					</Table.Row>
-					<Table.Row>
-						<Table.Head>Enrolled in</Table.Head>
-						<Table.Cell>
-							{details.data.enrollments.length}
-							{pluralize(details.data.representations.length, "subject", "subjects")}
-						</Table.Cell>
-					</Table.Row>
-					<Table.Row>
-						<Table.Head>Represents</Table.Head>
-						<Table.Cell>
-							{details.data.representations.length}
-							{pluralize(details.data.representations.length, "subject", "subjects")}
-						</Table.Cell>
-					</Table.Row>
-				</Table.Body>
-			</Table.Root>
-		{:else if details.state === "failed"}
-			<div class="flex w-full flex-col items-center justify-center space-y-2 p-6">
-				<XCircleIcon />
-				<div>{details.message}</div>
-			</div>
-		{:else}
-			<div class="flex w-full flex-col items-center justify-center space-y-2 p-6">
-				<div>Unknown action.</div>
-			</div>
-		{/if}
-	</div>
-
-	<!-- <div>
+<!-- <div>
 	<div class="text-lg">Set display name</div>
 </div> -->
 
-	<div class="space-y-4">
-		<div class="text-xl">Sessions and Devices</div>
+<div class="space-y-4">
+	<div class="text-xl">Sessions and Devices</div>
 
-		{#if sessions.state === "pending"}
-			<LoadingCard>{sessions.message}</LoadingCard>
-		{:else if sessions.state === "resolved"}
-			<div class="space-y-4">
-				{#if !canModifyOtherSessions && sessions.data.otherSessions.length > 0}
-					<div
-						class="flex gap-2 rounded border border-error-border bg-error px-3 py-2 text-error-foreground"
-					>
-						<div>
-							<AlertCircleIcon class="inline-block size-5" />
-						</div>
-						<div class="text-sm font-medium">
-							You have to wait {timeDistance(
-								now,
-								sessions.data.currentSession.createdAt.getTime() +
-									SESSION_MODIFY_RESTRICTION_PERIOD,
-							)} before you can log out the other sessions from this session as you logged in very recently.
-						</div>
+	{#if sessions.state === "pending"}
+		<LoadingCard>{sessions.message}</LoadingCard>
+	{:else if sessions.state === "resolved"}
+		<div class="space-y-4">
+			{#if !canModifyOtherSessions && sessions.data.otherSessions.length > 0}
+				<div
+					class="flex gap-2 rounded border border-error-border bg-error px-3 py-2 text-error-foreground"
+				>
+					<div>
+						<AlertCircleIcon class="inline-block size-5" />
 					</div>
-				{/if}
+					<div class="text-sm font-medium">
+						You have to wait {timeDistance(
+							now,
+							sessions.data.currentSession.createdAt.getTime() + SESSION_MODIFY_RESTRICTION_PERIOD,
+						)} before you can log out the other sessions from this session as you logged in very recently.
+					</div>
+				</div>
+			{/if}
 
-				{#snippet sessionCard(session: AccountSession)}
-					{@const isCurrent = isCurrentSession(session)}
+			{#snippet sessionCard(session: AccountSession)}
+				{@const isCurrent = isCurrentSession(session)}
 
-					<div
-						class={clsx("flex gap-4 rounded border p-4", {
-							"border-primary/50 bg-secondary bg-opacity-50": isCurrent,
-						})}
-					>
-						<div class="aspect-square p-2">
-							{#if session.deviceType === "laptop"}
-								<LaptopIcon />
-							{:else if session.deviceType === "mobile"}
-								<SmartphoneIcon />
-							{:else}
-								<CircleHelpIcon />
-							{/if}
-						</div>
-						<div>
-							<div>{session.deviceInfo || "Unknown device"}</div>
-							<div class="text-sm">
-								{#if isCurrent}
-									<div class="italic text-warning-foreground">This device</div>
-								{:else}
-									Last active {timeDistance(now, session.lastActive.getTime())} ago
-								{/if}
-							</div>
-							<div class="mt-3 text-xs">
-								Logged in on
-								{formatter.format(session.createdAt)}
-							</div>
-							<div class="text-xs font-medium">
-								Expires in
-								{timeDistance(now, session.expiresAt.getTime())}
-							</div>
-						</div>
-
-						{#if !isCurrent && sessions.state === "resolved"}
-							<Button
-								onclick={() => (showLogoutDialog = true)}
-								disabled={!canModifyOtherSessions}
-								variant={canModifyOtherSessions ? "destructive" : "secondary"}
-								size="sm"
-								class="my-auto ml-auto"
-							>
-								Logout
-							</Button>
-							<LogoutDialog
-								bind:open={showLogoutDialog}
-								{session}
-								{canModifyOtherSessions}
-								bind:sessions={sessions.data.otherSessions}
-							/>
+				<div
+					class={clsx("flex gap-4 rounded border p-4", {
+						"border-primary/50 bg-secondary bg-opacity-50": isCurrent,
+					})}
+				>
+					<div class="aspect-square p-2">
+						{#if session.deviceType === "laptop"}
+							<LaptopIcon />
+						{:else if session.deviceType === "mobile"}
+							<SmartphoneIcon />
+						{:else}
+							<CircleHelpIcon />
 						{/if}
 					</div>
-				{/snippet}
-
-				{@render sessionCard(sessions.data.currentSession)}
-
-				<div class="space-y-2">
-					<div class="text-sm uppercase">
-						Other sessions ({sessions.data.otherSessions.length})
+					<div>
+						<div>{session.deviceInfo || "Unknown device"}</div>
+						<div class="text-sm">
+							{#if isCurrent}
+								<div class="italic text-warning-foreground">This device</div>
+							{:else}
+								Last active {timeDistance(now, session.lastActive.getTime())} ago
+							{/if}
+						</div>
+						<div class="mt-3 text-xs">
+							Logged in on
+							{formatter.format(session.createdAt)}
+						</div>
+						<div class="text-xs font-medium">
+							Expires in
+							{timeDistance(now, session.expiresAt.getTime())}
+						</div>
 					</div>
 
-					{#each sessions.data.otherSessions.toSorted(sessionComparatorFn) as session}
-						{@render sessionCard(session)}
-					{:else}
-						<EmptyInfobox>You're not logged in anywhere else.</EmptyInfobox>
-					{/each}
-
-					<div class="text-sm text-muted-foreground">*Last active time is approximated.</div>
+					{#if !isCurrent && sessions.state === "resolved"}
+						<Button
+							onclick={() => (showLogoutDialog = true)}
+							disabled={!canModifyOtherSessions}
+							variant={canModifyOtherSessions ? "destructive" : "secondary"}
+							size="sm"
+							class="my-auto ml-auto"
+						>
+							Logout
+						</Button>
+						<LogoutDialog
+							bind:open={showLogoutDialog}
+							{session}
+							{canModifyOtherSessions}
+							bind:sessions={sessions.data.otherSessions}
+						/>
+					{/if}
 				</div>
+			{/snippet}
+
+			{@render sessionCard(sessions.data.currentSession)}
+
+			<div class="space-y-2">
+				<div class="text-sm uppercase">
+					Other sessions ({sessions.data.otherSessions.length})
+				</div>
+
+				{#each sessions.data.otherSessions.toSorted(sessionComparatorFn) as session}
+					{@render sessionCard(session)}
+				{:else}
+					<EmptyInfobox>You're not logged in anywhere else.</EmptyInfobox>
+				{/each}
+
+				<div class="text-sm text-muted-foreground">*Last active time is approximated.</div>
 			</div>
-		{:else if sessions.state === "failed"}
-			<LoadingFailedCard>{sessions.message}</LoadingFailedCard>
-		{:else}
-			<LoadingFailedCard>Unknown action.</LoadingFailedCard>
-		{/if}
+		</div>
+	{:else if sessions.state === "failed"}
+		<LoadingFailedCard>{sessions.message}</LoadingFailedCard>
+	{:else}
+		<LoadingFailedCard>Unknown action.</LoadingFailedCard>
+	{/if}
+</div>
+
+<div bind:this={passwordSection} class="space-y-4">
+	<div class="text-xl">Change Password</div>
+
+	<p>
+		Enter your current password to change your password. You will be logged out automatically once
+		you have changed your password.
+	</p>
+
+	<div class="w-full space-y-3 transition-all duration-150 sm:w-2/3">
+		<div class="space-y-2">
+			<Label for="current-password">Your current password</Label>
+			<PasswordInput
+				disabled={isChangingPassword}
+				bind:value={passwordInputs.current}
+				id="current-password"
+				placeholder="Current password"
+				onkeydown={() => (showPasswordInputErrors = true)}
+			/>
+
+			{#if showPasswordInputErrors && passwordInputs.current.length > 0 && validated.current != null}
+				<div transition:slide class="text-sm text-error-foreground">{validated.current}</div>
+			{/if}
+		</div>
+		<div class="space-y-2">
+			<Label for="new-password">New password to use</Label>
+			<PasswordInput
+				disabled={isChangingPassword}
+				bind:value={passwordInputs.password}
+				id="new-password"
+				placeholder="New password"
+				onkeydown={() => (showPasswordInputErrors = true)}
+			/>
+			{#if passwordInputs.password.length > 0}
+				<div transition:slide>
+					<PasswordStrengthMeter password={passwordInputs.password} />
+				</div>
+
+				{#if showPasswordInputErrors && validated.password != null}
+					<div transition:slide class="text-sm text-error-foreground">{validated.password}</div>
+				{/if}
+			{/if}
+		</div>
+		<div class="space-y-2">
+			<Label for="confirm-password">Confirm your new password</Label>
+			<PasswordInput
+				disabled={isChangingPassword}
+				bind:value={passwordInputs.confirm}
+				id="confirm-password"
+				placeholder="Confirm password"
+				onkeydown={() => (showPasswordInputErrors = true)}
+			/>
+
+			{#if passwordInputs.confirm.length > 0}
+				<div transition:slide>
+					<PasswordStrengthMeter password={passwordInputs.confirm} />
+				</div>
+
+				{#if showPasswordInputErrors && validated.confirm != null}
+					<div transition:slide class="text-sm text-error-foreground">{validated.confirm}</div>
+				{/if}
+			{/if}
+		</div>
 	</div>
 
-	<div bind:this={passwordSection} class="space-y-4">
-		<div class="text-xl">Change Password</div>
+	<div>
+		<Button
+			variant="outline"
+			disabled={isChangingPassword}
+			onclick={() => {
+				passwordInputs = { current: "", password: "", confirm: "" };
+			}}>Reset</Button
+		>
+		<Button
+			disabled={isChangingPassword || !passwordSchema.safeParse(passwordInputs).success}
+			onclick={async () => {
+				if (isChangingPassword) return;
+				const parsed = passwordSchema.safeParse(passwordInputs);
+				if (!parsed.success) {
+					return toast.error(parsed.error.issues[0]?.message ?? "Invalid inputs!");
+				}
 
-		<p>
-			Enter your current password to change your password. You will be logged out automatically once
-			you have changed your password.
-		</p>
+				isChangingPassword = true;
 
-		<div class="w-full space-y-3 transition-all duration-150 sm:w-2/3">
-			<div class="space-y-2">
-				<Label for="current-password">Your current password</Label>
-				<PasswordInput
-					disabled={isChangingPassword}
-					bind:value={passwordInputs.current}
-					id="current-password"
-					placeholder="Current password"
-					onkeydown={() => (showPasswordInputErrors = true)}
-				/>
-
-				{#if showPasswordInputErrors && passwordInputs.current.length > 0 && validated.current != null}
-					<div transition:slide class="text-sm text-error-foreground">{validated.current}</div>
-				{/if}
-			</div>
-			<div class="space-y-2">
-				<Label for="new-password">New password to use</Label>
-				<PasswordInput
-					disabled={isChangingPassword}
-					bind:value={passwordInputs.password}
-					id="new-password"
-					placeholder="New password"
-					onkeydown={() => (showPasswordInputErrors = true)}
-				/>
-				{#if passwordInputs.password.length > 0}
-					<div transition:slide>
-						<PasswordStrengthMeter password={passwordInputs.password} />
-					</div>
-
-					{#if showPasswordInputErrors && validated.password != null}
-						<div transition:slide class="text-sm text-error-foreground">{validated.password}</div>
-					{/if}
-				{/if}
-			</div>
-			<div class="space-y-2">
-				<Label for="confirm-password">Confirm your new password</Label>
-				<PasswordInput
-					disabled={isChangingPassword}
-					bind:value={passwordInputs.confirm}
-					id="confirm-password"
-					placeholder="Confirm password"
-					onkeydown={() => (showPasswordInputErrors = true)}
-				/>
-
-				{#if passwordInputs.confirm.length > 0}
-					<div transition:slide>
-						<PasswordStrengthMeter password={passwordInputs.confirm} />
-					</div>
-
-					{#if showPasswordInputErrors && validated.confirm != null}
-						<div transition:slide class="text-sm text-error-foreground">{validated.confirm}</div>
-					{/if}
-				{/if}
-			</div>
-		</div>
-
-		<div>
-			<Button
-				variant="outline"
-				disabled={isChangingPassword}
-				onclick={() => {
-					passwordInputs = { current: "", password: "", confirm: "" };
-				}}>Reset</Button
-			>
-			<Button
-				disabled={isChangingPassword || !passwordSchema.safeParse(passwordInputs).success}
-				onclick={async () => {
-					if (isChangingPassword) return;
-					const parsed = passwordSchema.safeParse(passwordInputs);
-					if (!parsed.success) {
-						return toast.error(parsed.error.issues[0]?.message ?? "Invalid inputs!");
-					}
-
-					isChangingPassword = true;
-
-					const response = await fetch("/api/student/account/password", {
-						method: "PATCH",
-						body: JSON.stringify({
-							currentPassword: passwordInputs.current,
-							newPassword: passwordInputs.password,
-						} satisfies Payload.ChangePassword),
-						headers: { "Content-Type": "application/json" },
-					});
-					if (!response.ok && response.status !== 400) {
-						isChangingPassword = false;
-						toast.error("Failed to change your password.");
-						return;
-					}
-					const result: Result = await response.json();
-					if (!result.ok) {
-						isChangingPassword = false;
-						toast.error(result.reason);
-						return;
-					}
-
-					passwordInputs = { current: "", password: "", confirm: "" };
-					toast.success("Password was changed successfully!");
-					showPasswordInputErrors = false;
-					window.location.assign("/logout");
+				const response = await fetch("/api/student/account/password", {
+					method: "PATCH",
+					body: JSON.stringify({
+						currentPassword: passwordInputs.current,
+						newPassword: passwordInputs.password,
+					} satisfies Payload.ChangePassword),
+					headers: { "Content-Type": "application/json" },
+				});
+				if (!response.ok && response.status !== 400) {
 					isChangingPassword = false;
-				}}
-			>
-				{#if isChangingPassword}
-					<LoaderCircleIcon class="animate-spin" />
-				{:else}
-					Change password
-				{/if}
-			</Button>
-		</div>
+					toast.error("Failed to change your password.");
+					return;
+				}
+				const result: Result = await response.json();
+				if (!result.ok) {
+					isChangingPassword = false;
+					toast.error(result.reason);
+					return;
+				}
+
+				passwordInputs = { current: "", password: "", confirm: "" };
+				toast.success("Password was changed successfully!");
+				showPasswordInputErrors = false;
+				window.location.assign("/logout");
+				isChangingPassword = false;
+			}}
+		>
+			{#if isChangingPassword}
+				<LoaderCircleIcon class="animate-spin" />
+			{:else}
+				Change password
+			{/if}
+		</Button>
 	</div>
 </div>

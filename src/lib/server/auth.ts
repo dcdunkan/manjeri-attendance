@@ -103,7 +103,6 @@ export async function validateSessionToken(
 		deviceInfo.label !== session.deviceInfo ||
 		deviceInfo.type !== session.deviceType
 	) {
-		console.log("writing last active for", deviceInfo);
 		await db
 			.update(tables.sessions)
 			.set({ ...alwaysIncluded })

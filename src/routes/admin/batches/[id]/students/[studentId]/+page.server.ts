@@ -11,6 +11,8 @@ export const load: PageServerLoad = async (event) => {
 	}
 
 	return {
+		title: "Student Details",
+		backwards: `/admin/batches/${batchId}/students`,
 		student: getStudent(batchId, studentId),
 	};
 };

@@ -12,6 +12,8 @@ export const load: PageServerLoad = async (event) => {
 	}
 
 	return {
+		title: "Subject Details",
+		backwards: `/admin/batches/${batchId}`,
 		subject: getSubject(batchId, subjectId),
 		students: getEnrolledStudents(batchId, subjectId),
 	};

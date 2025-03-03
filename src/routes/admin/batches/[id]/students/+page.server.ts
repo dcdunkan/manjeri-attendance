@@ -10,6 +10,7 @@ export const load: PageServerLoad = async (event) => {
 	}
 
 	return {
+		backwards: `/admin/batches/${batchId}`,
 		students: getStudents(batchId),
 	};
 };

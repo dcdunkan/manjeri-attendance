@@ -1,16 +1,21 @@
 <script lang="ts">
-	import type { PageData } from "./$types";
-	import { ArrowRightIcon, CalendarCheck2Icon, LogOutIcon, UserCogIcon } from "lucide-svelte";
+	import type { PageData, PageProps } from "./$types";
+	import {
+		ArrowLeftIcon,
+		ArrowRightIcon,
+		CalendarCheck2Icon,
+		LogOutIcon,
+		UserCogIcon,
+	} from "lucide-svelte";
 	import AttendanceCard from "./attendance-card.svelte";
 	import { type MenuItem, default as Menu } from "$lib/components/menu-items.svelte";
 	import { routes } from "$lib/constants";
-	import NavigationHeader from "$lib/components/navigation-header.svelte";
 	import { onMount } from "svelte";
 	import type { LoadedData } from "$lib/types";
 	import LoadingCard from "$lib/components/loading-card.svelte";
 	import LoadingFailedCard from "$lib/components/loading-failed-card.svelte";
 
-	let { data }: { data: PageData } = $props();
+	let { data }: PageProps = $props();
 
 	const menuItems: MenuItem[] = [
 		{
@@ -47,8 +52,6 @@
 		}
 	});
 </script>
-
-<NavigationHeader title="Dashboard" />
 
 <div class="mb-4">
 	<div class="text-muted-foreground">You're logged in as</div>

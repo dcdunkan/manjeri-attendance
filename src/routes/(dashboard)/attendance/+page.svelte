@@ -1,5 +1,4 @@
 <script lang="ts">
-	import NavigationHeader from "$lib/components/navigation-header.svelte";
 	import {
 		ArrowLeftIcon,
 		ArrowRightIcon,
@@ -252,8 +251,6 @@
 		weekday: "short",
 	});
 </script>
-
-<NavigationHeader title="Attendance" />
 
 <div class="flex place-items-center justify-between">
 	<h1 class="text-2xl">
