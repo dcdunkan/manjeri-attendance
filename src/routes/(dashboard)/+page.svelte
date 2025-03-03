@@ -4,6 +4,7 @@
 		ArrowLeftIcon,
 		ArrowRightIcon,
 		CalendarCheck2Icon,
+		KeyRoundIcon,
 		LogOutIcon,
 		UserCogIcon,
 	} from "lucide-svelte";
@@ -14,6 +15,7 @@
 	import type { LoadedData } from "$lib/types";
 	import LoadingCard from "$lib/components/loading-card.svelte";
 	import LoadingFailedCard from "$lib/components/loading-failed-card.svelte";
+	import { slide } from "svelte/transition";
 
 	let { data }: PageProps = $props();
 
@@ -43,9 +45,17 @@
 		state: "pending",
 		message: "Loading student details...",
 	});
+	let isDefaultPassword = $state<LoadedData<boolean>>({ state: "pending", message: "" });
+
 	onMount(async () => {
 		try {
 			details = { state: "resolved", data: await data.details };
+
+			try {
+				isDefaultPassword = { state: "resolved", data: await data.isDefaultPassword };
+			} catch (error) {
+				isDefaultPassword = { state: "failed", message: "Could not get the password details" };
+			}
 		} catch (err) {
 			console.error(err);
 			details = { state: "failed", message: "Failed to load student details." };
@@ -53,7 +63,30 @@
 	});
 </script>
 
-<div class="mb-4">
+{#if isDefaultPassword.state === "resolved" && isDefaultPassword.data === true}
+	<a
+		transition:slide
+		class="block rounded border border-error-border bg-error p-4 text-sm text-error-foreground"
+		href="/account-settings"
+	>
+		<div class="flex place-items-center gap-4">
+			<div>
+				<KeyRoundIcon />
+			</div>
+			<div class="space-y-2">
+				<div class="space-y-0.5">
+					<div class="font-medium">Change your password</div>
+					<div>
+						Password change is highly recommended! Click here to go to the account settings to
+						change your password.
+					</div>
+				</div>
+			</div>
+		</div>
+	</a>
+{/if}
+
+<div>
 	<div class="text-muted-foreground">You're logged in as</div>
 	<div class="mt-1 truncate text-3xl">{data.local.fullName}</div>
 </div>
@@ -66,11 +99,8 @@
 	{#if details.data.representations.length > 0}
 		<div>
 			<div class="mb-4 space-y-2">
-				<div class="font-medium text-muted-foreground">Update attendance</div>
-				<p>
-					Below are the subjects that you are a representative of. Choose one to update the
-					attendance of your batchmates.
-				</p>
+				You are a representative for the following subjects. Select one to update attendance for
+				your batchmates.
 			</div>
 			<div class="grid grid-cols-2 gap-2">
 				{#each details.data.representations as representation}
@@ -79,7 +109,7 @@
 							class="flex cursor-pointer select-none place-items-center justify-between rounded border p-4 transition-all duration-200 hover:border-primary/60 hover:bg-primary/5"
 						>
 							<div>{details.data.subjects[representation.subjectId].name}</div>
-							<div><ArrowRightIcon /></div>
+							<div><ArrowRightIcon class="size-5" /></div>
 						</div>
 					</a>
 				{/each}
@@ -87,13 +117,7 @@
 		</div>
 	{/if}
 
-	<div>
-		<div class="mb-4 space-y-2">
-			<div class="font-medium text-muted-foreground">Student Menu</div>
-			<p>You can choose one of the available sections shown below to view more regarding it.</p>
-		</div>
-		<Menu items={menuItems} />
-	</div>
+	<Menu items={menuItems} />
 {:else if details.state === "failed"}
 	<LoadingFailedCard>{details.message}</LoadingFailedCard>
 {:else}

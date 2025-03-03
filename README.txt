@@ -50,15 +50,15 @@ This warning will be removed once this is resolved internally.
     [x] Modify password
     [x] Sessions and devices
 
-> Refinements to be considered (4/23):
+> Refinements to be considered (8/23):
 
 [ ] Take values from session (like studentId) instead of passing.
 [x] block newly logged in devices from logging out other devices for 30 minutes (was changed to 24 hours)
-[ ] Recommend changing passwords in dashboard
+[x] Recommend changing passwords in dashboard
 [ ] Limit sessions. Limit admin to 1. Limit student to ??
 [x] Make sure lastActive renewal period is considerably enough.
 [ ] Change references of batch name to batch year everywhere.
-[ ] remove references of the internal IDs in UI
+[x] remove references of the internal IDs in UI
 [x] Lock mechanism in auto-generating passwords
 [ ] creations & updations datetimes
 [ ] algorithm for display name
@@ -66,7 +66,7 @@ This warning will be removed once this is resolved internally.
 [x] figure out loading spinners in forms after submission.
 [x] redo navigation bar
 [ ] redis integration
-[ ] add head-titles
+[x] add head-titles
 [ ] use global stores for global data
 [ ] switch to data tables instead of normal tables
 [ ] extra verifications for auth in server routes

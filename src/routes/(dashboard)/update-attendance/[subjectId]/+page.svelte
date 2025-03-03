@@ -69,6 +69,10 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Update attendance</title>
+</svelte:head>
+
 <div class="sticky top-0 z-10 bg-background px-6 py-4">
 	<div class="flex place-items-center gap-3">
 		<a href=".." class="aspect-square p-1">

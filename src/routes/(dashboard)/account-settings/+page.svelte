@@ -190,10 +190,6 @@
 					<Table.Cell>{details.data.fullName}</Table.Cell>
 				</Table.Row>
 				<Table.Row>
-					<Table.Head>ID</Table.Head>
-					<Table.Cell>{details.data.id}</Table.Cell>
-				</Table.Row>
-				<Table.Row>
 					<Table.Head>Login</Table.Head>
 					<Table.Cell>{details.data.account.login}</Table.Cell>
 				</Table.Row>
@@ -205,7 +201,7 @@
 					<Table.Head>Enrolled in</Table.Head>
 					<Table.Cell>
 						{details.data.enrollments.length}
-						{pluralize(details.data.representations.length, "subject", "subjects")}
+						{pluralize(details.data.enrollments.length, "subject", "subjects")}
 					</Table.Cell>
 				</Table.Row>
 				<Table.Row>

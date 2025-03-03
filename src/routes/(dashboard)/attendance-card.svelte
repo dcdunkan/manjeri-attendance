@@ -8,7 +8,7 @@
 	const percent = cutePercent(safeDivision(attendanceData.attended, attendanceData.total) * 100);
 </script>
 
-<a href={routes.attendance}>
+<a href={routes.attendance} class="block">
 	<div class="flex flex-col gap-4 rounded-lg border bg-primary-foreground p-6 text-right">
 		<div>
 			<div class="text-5xl">{percent} %</div>

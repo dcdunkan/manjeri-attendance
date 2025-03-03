@@ -6,5 +6,8 @@ export const load: PageServerLoad = (event) => {
 		redirect(303, "/logout");
 	}
 
-	return {};
+	return {
+		title: "Dashboard",
+		showTitle: false,
+	};
 };

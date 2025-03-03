@@ -1,4 +1,4 @@
-import { getStudent } from "$lib/server/db/students";
+import { getStudent, isUnsafePasswordSaved } from "$lib/server/db/students";
 import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
@@ -31,7 +31,10 @@ export const load: PageServerLoad = (event) => {
 	}
 
 	return {
+		title: "Dashboard",
+		showTitle: false,
 		local: event.locals.account.student,
 		details: filteredStudentDetails(),
+		isDefaultPassword: isUnsafePasswordSaved(event.locals.account.id),
 	};
 };

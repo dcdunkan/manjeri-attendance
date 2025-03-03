@@ -3,7 +3,13 @@
 
 	import { page } from "$app/state";
 	import { ArrowLeftIcon } from "lucide-svelte";
+
+	let showTitle = $derived(page.data.showTitle ?? true);
 </script>
+
+<svelte:head>
+	<title>{page.data.title}</title>
+</svelte:head>
 
 <div class="min-h-screen">
 	<div class="mx-auto flex h-screen max-w-screen-md flex-col overflow-y-scroll">
@@ -14,7 +20,11 @@
 						<ArrowLeftIcon class="size-4" />
 					</a>
 				{/if}
-				<h1 class="text-lg">{page.data.title}</h1>
+				<h1 class="text-lg">
+					{#if showTitle}
+						{page.data.title}
+					{/if}
+				</h1>
 			</div>
 		</div>
 

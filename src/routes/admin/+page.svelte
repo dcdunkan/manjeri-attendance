@@ -25,10 +25,5 @@
 </div>
 
 <div>
-	This is your dashboard. You can choose one of the available sections shown below to view more
-	regarding it.
-</div>
-
-<div>
 	<Menu items={menuItems} />
 </div>
