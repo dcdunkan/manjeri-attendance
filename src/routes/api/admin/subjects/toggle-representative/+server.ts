@@ -9,7 +9,10 @@ import { and, eq } from "drizzle-orm";
 import { notOk, ok } from "$lib/responses";
 import type { Data, Payload } from "$lib/types";
 
-export async function POST({ request }) {
+export async function POST({ request, locals }) {
+	if (locals.account == null || locals.session == null) return notOk("Unauthorized", 401);
+	if (locals.account.role !== "administrator") return notOk("Forbidden", 401);
+
 	if (request.headers.get("content-type") !== "application/json")
 		return notOk("Invalid content type", 400);
 

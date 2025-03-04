@@ -4,7 +4,6 @@ import type { Data } from "$lib/types.js";
 import { z } from "zod";
 
 const getSchema = z.object({
-	student: z.coerce.number(),
 	start: z.coerce.number().pipe(z.coerce.date()),
 	end: z.coerce.number().pipe(z.coerce.date()),
 	subjects: z
@@ -14,7 +13,7 @@ const getSchema = z.object({
 });
 
 export async function GET({ request, locals }) {
-	if (locals.account == null) return notOk("Unauthorized", 401);
+	if (locals.account == null || locals.session == null) return notOk("Unauthorized", 401);
 	if (locals.account.role !== "student" || locals.account.student == null)
 		return notOk("Forbidden", 401);
 
@@ -25,7 +24,7 @@ export async function GET({ request, locals }) {
 	}
 
 	const result = await getMonthlyStudentPeriods(
-		parsed.data.student,
+		locals.account.student.id,
 		parsed.data.start,
 		parsed.data.end,
 		parsed.data.subjects,

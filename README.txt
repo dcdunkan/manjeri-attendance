@@ -50,9 +50,9 @@ This warning will be removed once this is resolved internally.
     [x] Modify password
     [x] Sessions and devices
 
-> Refinements to be considered (8/23):
+> Refinements to be considered (10/23):
 
-[ ] Take values from session (like studentId) instead of passing.
+[x] Take values from session (like studentId) instead of passing.
 [x] block newly logged in devices from logging out other devices for 30 minutes (was changed to 24 hours)
 [x] Recommend changing passwords in dashboard
 [ ] Limit sessions. Limit admin to 1. Limit student to ??
@@ -69,7 +69,7 @@ This warning will be removed once this is resolved internally.
 [x] add head-titles
 [ ] use global stores for global data
 [ ] switch to data tables instead of normal tables
-[ ] extra verifications for auth in server routes
+[x] extra verifications for auth in server routes
 [ ] verify if the attendance is marked/edited/deleted within the allowed time period (last 7 days)
 [ ] drizzle transactions / batch operations
 [ ] Make all the DB transactions abstractions & repositories

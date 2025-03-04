@@ -9,7 +9,7 @@ const deleteSchema = z.object({
 });
 
 export async function DELETE({ request, locals }) {
-	if (locals.account == null) return notOk("Unauthorized", 401);
+	if (locals.account == null || locals.session == null) return notOk("Unauthorized", 401);
 	if (locals.account.role !== "administrator") return notOk("Forbidden", 401);
 
 	const { searchParams } = new URL(request.url);

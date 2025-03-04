@@ -13,7 +13,7 @@ const postSchema = z.object({
 });
 
 export async function POST({ request, locals }) {
-	if (locals.account == null) return notOk("Unauthorized", 401);
+	if (locals.account == null || locals.session == null) return notOk("Unauthorized", 401);
 	if (locals.account.role !== "student" || locals.account.student == null)
 		return notOk("Forbidden", 401);
 
@@ -78,7 +78,7 @@ const patchSchema = z.object({
 });
 
 export async function PATCH({ request, locals }) {
-	if (locals.account == null) return notOk("Unauthorized", 401);
+	if (locals.account == null || locals.session == null) return notOk("Unauthorized", 401);
 	if (locals.account.role !== "student" || locals.account.student == null)
 		return notOk("Forbidden", 401);
 
@@ -168,7 +168,11 @@ const deleteSchema = z.object({
 	}),
 });
 
-export async function DELETE({ request }) {
+export async function DELETE({ request, locals }) {
+	if (locals.account == null || locals.session == null) return notOk("Unauthorized", 401);
+	if (locals.account.role !== "student" || locals.account.student == null)
+		return notOk("Forbidden", 401);
+
 	const { searchParams } = new URL(request.url);
 	const parsed = deleteSchema.safeParse(Object.fromEntries(searchParams));
 	if (!parsed.success) {

@@ -108,13 +108,12 @@
 			return;
 		}
 
-		const sync = { selected, studentId: data.studentId, numberOfDays, cacheKey };
+		const sync = { selected, numberOfDays, cacheKey };
 		(async () => {
 			const loadingToast = toast.loading("Fetching from server...");
 			monthlyData = { state: "pending", message: "Loading monthly data..." };
 
 			const searchParams = new URLSearchParams({
-				student: sync.studentId.toString(),
 				start: Date.UTC(sync.selected.year, sync.selected.month, 1).toString(),
 				end: Date.UTC(sync.selected.year, sync.selected.month, sync.numberOfDays).toString(),
 				subjects: Object.keys(enrolledSubjects.data)
@@ -198,7 +197,6 @@
 			cacheKey,
 			subjectId: subjectDialog.subjectId,
 			page: subjectDialog.currentPage,
-			studentId: data.studentId,
 		};
 
 		(async () => {
@@ -207,7 +205,6 @@
 			absentPeriods = { state: "pending", message: "Loading absent data..." };
 
 			const searchParams = new URLSearchParams({
-				student: sync.studentId.toString(),
 				subject: sync.subjectId.toString(),
 				page: sync.page.toString(),
 			});
