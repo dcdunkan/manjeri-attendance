@@ -37,7 +37,7 @@
 		subject,
 		studentMap = $bindable(),
 		monthlyCache = $bindable(),
-		periodCount = $bindable(0),
+		periodCount = $bindable(),
 		selectedDate = $bindable(),
 	}: {
 		filterString: string;

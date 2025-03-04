@@ -11,25 +11,26 @@ export async function getPeriod(subjectId: number, periodId: number) {
 }
 
 export async function getPeriods(subjectId: number, startTime: Date, endTime: Date) {
-	const periods = await db.query.periods.findMany({
-		where: () =>
-			and(
-				eq(schema.periods.subjectId, subjectId),
-				between(schema.periods.date, startTime, endTime),
-			),
+	const subject = await db.query.subjects.findFirst({
+		where: () => eq(schema.subjects.id, subjectId),
 		extras: {
 			totalPeriods: db
 				.$count(schema.periods, sql`"periods"."subject_id" = ${subjectId}`.mapWith(Number))
 				.as("total_periods"),
 		},
-		with: { absentees: { columns: { periodId: false, subjectId: false } } },
+		with: {
+			periods: {
+				where: between(schema.periods.date, startTime, endTime),
+				with: { absentees: { columns: { periodId: false, subjectId: false } } },
+			},
+		},
 	});
 
-	const totalPeriods = periods.length > 0 ? Number(periods[0].totalPeriods) : 0;
+	if (subject == null) throw new Error("Subject not found");
+
 	return {
-		totalPeriods,
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		periods: periods.map(({ totalPeriods, ...period }) => period),
+		totalPeriods: Number(subject.totalPeriods),
+		periods: subject.periods,
 	};
 }
 

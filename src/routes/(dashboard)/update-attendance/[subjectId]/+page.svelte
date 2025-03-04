@@ -94,17 +94,19 @@
 			<div class="grid grid-cols-3 gap-2 *:text-center">
 				<div class="card">
 					<div class="text-4xl font-bold">{subject.data.enrollmentCount}</div>
-					<div>{pluralize(subject.data.enrollmentCount, "student", "students")}</div>
+					<div class="text-sm">
+						{pluralize(subject.data.enrollmentCount, "student", "students")}
+					</div>
 				</div>
 				<div class="card">
 					<div class="text-4xl font-bold">{subject.data.representatives.length}</div>
-					<div>
-						{pluralize(subject.data.representatives.length, "representative", "representatives")}
+					<div class="text-sm">
+						{pluralize(subject.data.representatives.length, "rep", "reps")}
 					</div>
 				</div>
 				<div class="card">
 					<div class="text-4xl font-bold">{periodCount}</div>
-					<div>{pluralize(periodCount, "period", "periods")}</div>
+					<div class="text-sm">{pluralize(periodCount, "period", "periods")}</div>
 				</div>
 			</div>
 
