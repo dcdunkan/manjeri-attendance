@@ -62,9 +62,7 @@
 					student: { fullName: enrollment.student.fullName },
 				});
 			}
-			toast.success(
-				`Successfully ${represents ? "demote" : "promote"}d ${enrollment.student.fullName}.`,
-			);
+			toast.success(`Successfully ${result.data.status} ${enrollment.student.fullName}.`);
 		}
 
 		isPromoteLoading = false;
