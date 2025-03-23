@@ -1,6 +1,13 @@
 export const ACCOUNT_ROLES = ["administrator", "student"] as const;
 export const DEVICE_TYPES = ["laptop", "mobile", "unknown"] as const;
 
+export const MAX_SESSIONS_PER_ACCOUNT: {
+	[role in (typeof ACCOUNT_ROLES)[number]]: number;
+} = {
+	administrator: 2,
+	student: 4,
+};
+
 export const SECOND = 1 * 1000,
 	MINUTE = 60 * SECOND,
 	HOUR = 60 * MINUTE,

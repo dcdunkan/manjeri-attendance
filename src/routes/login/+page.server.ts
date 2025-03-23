@@ -13,8 +13,9 @@ import {
 	generateSessionToken,
 	setSessionTokenCookie,
 } from "$lib/server/auth";
-import { routes } from "$lib/constants";
+import { MAX_SESSIONS_PER_ACCOUNT, routes } from "$lib/constants";
 import { getDeviceInfo } from "$lib/device-info";
+import { getAccount } from "$lib/server/db/accounts";
 
 export const load: PageServerLoad = async () => {
 	return {
@@ -31,13 +32,14 @@ export const actions: Actions = {
 
 		const role: tables.AccountRole = form.data.userId === ADMIN_LOGIN ? "administrator" : "student";
 
-		const account = await db.query.accounts.findFirst({
-			where: () => and(eq(tables.accounts.login, form.data.userId), eq(tables.accounts.role, role)),
-		});
-
+		const account = await getAccount(form.data.userId, role);
 		if (account == null) return error(404, { message: "Incorrect username or password." });
 		const validPassword = await verifyHash(account.passwordHash, form.data.password);
 		if (!validPassword) return error(400, { message: "Incorrect username or password" });
+
+		// if (Number(account.sessionCount) >= MAX_SESSIONS_PER_ACCOUNT[role] - 1) {
+		// 	await
+		// }
 
 		const sessionToken = generateSessionToken();
 		const deviceInfo = getDeviceInfo(event.request.headers.get("User-Agent") ?? "");
