@@ -13,9 +13,9 @@
 <div class="space-y-8">
 	<div class="mx-auto flex max-w-sm place-content-center">
 		{#if $mode === "light"}
-			<img alt="Dactylo logo" src="/images/dactylo-dark.png" />
+			<img alt="Dactylo logo" src="/images/dactylo-dark.png" class="w-3/5" />
 		{:else}
-			<img alt="Dactylo logo" src="/images/dactylo-light.png" class="w-4/5" />
+			<img alt="Dactylo logo" src="/images/dactylo-light.png" class="w-3/5" />
 		{/if}
 	</div>
 
@@ -23,9 +23,9 @@
 
 	<div class="mx-auto flex max-w-sm place-content-center">
 		{#if $mode === "light"}
-			<img alt="Inara logo" src="/images/inara-dark.png" class="w-3/5" />
+			<img alt="Inara logo" src="/images/inara-dark.png" class="w-2/5" />
 		{:else}
-			<img alt="Inara logo" src="/images/inara-light.png" class="w-3/5" />
+			<img alt="Inara logo" src="/images/inara-light.png" class="w-2/5" />
 		{/if}
 	</div>
 </div>
