@@ -70,7 +70,7 @@
 </script>
 
 <svelte:head>
-	<title>Update attendance</title>
+	<title>Update attendance | Dactylo</title>
 </svelte:head>
 
 <div class="sticky top-0 z-10 bg-background px-6 py-4">

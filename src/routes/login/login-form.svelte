@@ -29,52 +29,41 @@
 	const { form: formData, enhance, submitting } = form;
 </script>
 
-<Card.Root class="mx-auto max-w-sm">
-	<Card.Header>
-		<Card.Title class="text-2xl">Login</Card.Title>
-		<Card.Description>Enter your ID below to login to your account</Card.Description>
-	</Card.Header>
-	<Card.Content>
-		<form method="POST" use:enhance action="?/login" class="grid gap-4">
-			<Form.Field {form} name="userId">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label>Your ID</Form.Label>
-						<Input {...props} bind:value={$formData.userId} autocomplete="email" />
-					{/snippet}
-				</Form.Control>
-				<Form.FieldErrors />
-			</Form.Field>
+<div class="mx-auto max-w-sm p-6">
+	<form method="POST" use:enhance action="?/login" class="grid gap-4">
+		<Form.Field {form} name="userId">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label>Your ID</Form.Label>
+					<Input {...props} bind:value={$formData.userId} autocomplete="email" />
+				{/snippet}
+			</Form.Control>
+			<Form.FieldErrors />
+		</Form.Field>
 
-			<Form.Field {form} name="password">
-				<Form.Control>
-					{#snippet children({ props })}
-						<Form.Label for="password">Password</Form.Label>
-						<Input
-							{...props}
-							type="password"
-							id="password"
-							autocomplete="new-password"
-							bind:value={$formData.password}
-							class="font-bold tracking-widest"
-						/>
-					{/snippet}
-				</Form.Control>
-				<Form.FieldErrors />
-			</Form.Field>
+		<Form.Field {form} name="password">
+			<Form.Control>
+				{#snippet children({ props })}
+					<Form.Label for="password">Password</Form.Label>
+					<Input
+						{...props}
+						type="password"
+						id="password"
+						autocomplete="new-password"
+						bind:value={$formData.password}
+						class="font-bold tracking-widest"
+					/>
+				{/snippet}
+			</Form.Control>
+			<Form.FieldErrors />
+		</Form.Field>
 
-			<Form.Button disabled={$submitting}>
-				{#if $submitting}
-					<LoaderCircleIcon class="animate-spin" /> Logging in...
-				{:else}
-					Login
-				{/if}
-			</Form.Button>
-		</form>
-
-		<div class="mt-4 text-center text-sm">
-			Contact your administrator if you don't have an account or if you're having trouble logging
-			in.
-		</div>
-	</Card.Content>
-</Card.Root>
+		<Form.Button disabled={$submitting}>
+			{#if $submitting}
+				<LoaderCircleIcon class="animate-spin" /> Logging in...
+			{:else}
+				Login
+			{/if}
+		</Form.Button>
+	</form>
+</div>

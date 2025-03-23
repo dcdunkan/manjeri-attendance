@@ -8,7 +8,7 @@
 </script>
 
 <svelte:head>
-	<title>{page.data.title}</title>
+	<title>{page.data.title} | Dactylo</title>
 </svelte:head>
 
 <div class="min-h-screen">
