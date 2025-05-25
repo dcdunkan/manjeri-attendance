@@ -40,7 +40,8 @@
 
 	const timezone = getLocalTimeZone();
 	const maxValue = today(timezone);
-	const minValue = maxValue.subtract({ days: 6 });
+	const lastUpdatableDays = 365; // 7;
+	const minValue = maxValue.subtract({ days: lastUpdatableDays - 1 });
 	let value = $state(maxValue);
 
 	let showList = $state(false);
